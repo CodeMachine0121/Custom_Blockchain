@@ -1,10 +1,11 @@
 Manifest-Version: 1.0
 Main-Class: Users.Node.NodeUser
-Class-Path: audience-annotations-0.5.0.jar netty-transport-4.1.48.Final.
- jar commons-lang-2.6.jar netty-transport-native-unix-common-4.1.48.Fina
- l.jar netty-handler-4.1.48.Final.jar bcprov-jdk15on-1.66.jar netty-buff
- er-4.1.48.Final.jar zookeeper-3.6.1.jar zookeeper-jute-3.6.1.jar netty-
- codec-4.1.48.Final.jar slf4j-api-1.7.25.jar slf4j-log4j12-1.7.25.jar ne
- tty-transport-native-epoll-4.1.48.Final.jar netty-common-4.1.48.Final.j
- ar netty-resolver-4.1.48.Final.jar json-20200518.jar log4j-1.2.17.jar
+Class-Path: Lib\zookeeper-3.6.1.jar Lib\netty-handler-4.1.48.Final.jar L
+ ib\netty-buffer-4.1.48.Final.jar Lib\netty-transport-native-epoll-4.1.4
+ 8.Final.jar Lib\log4j-1.2.17.jar Lib\commons-lang-2.6.jar Lib\slf4j-api
+ -1.7.25.jar Lib\netty-transport-native-unix-common-4.1.48.Final.jar Lib
+ \slf4j-log4j12-1.7.25.jar Lib\netty-transport-4.1.48.Final.jar Lib\json
+ -20200518.jar Lib\bcprov-jdk15on-1.66.jar Lib\audience-annotations-0.5.
+ 0.jar Lib\netty-resolver-4.1.48.Final.jar Lib\zookeeper-jute-3.6.1.jar 
+ Lib\netty-codec-4.1.48.Final.jar Lib\netty-common-4.1.48.Final.jar
 
