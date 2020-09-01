@@ -26,7 +26,7 @@ public class Block {
         public  int difiifulty;
         public  long timestamp;
         public Miner miner;
-        public static  int miner_reward=30;
+        public static  int miner_reward=1;
         public  String data;
         public static int block_limitation=2;
         public  ArrayList<Transaction> transactions = new ArrayList<Transaction>();

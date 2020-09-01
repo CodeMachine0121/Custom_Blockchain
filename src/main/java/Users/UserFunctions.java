@@ -65,6 +65,10 @@ public class UserFunctions {
         System.out.print("\tFee:\t");
         double fee=scanner.nextDouble();
 
+        // no enough money
+        if(user.balance< fee*Math.pow(10,-5)+amount){
+            return null;
+        }
         return user.Make_Transaction(sender,receiver,amount,fee,messages);
     }
 
@@ -184,6 +188,16 @@ public class UserFunctions {
 
         System.out.println("\t\t}");
         System.out.println("\t}");
+    }
+
+
+    // For Node used
+    public static Double setTotalBalance(){
+        try{
+            return Double.valueOf(scanner.next());
+        }catch (Exception e){
+            return -1.0;
+        }
     }
 
 }

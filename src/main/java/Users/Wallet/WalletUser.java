@@ -77,9 +77,12 @@ public class WalletUser {
                     System.out.println("尚未取得餘額");
                     continue;
                 }
-
-                transactions.add(UserFunctions.makeTransaction(user));
-
+                Transaction wannaTransaction = UserFunctions.makeTransaction(user);
+                if(wannaTransaction==null){
+                    System.out.println("餘額不足");
+                    continue;
+                }
+                transactions.add(wannaTransaction);
                 UserFunctions.List_Transaction(transactions);
             }
             else if("commit".equals(command)){

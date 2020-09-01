@@ -3,6 +3,7 @@ package Users.Node;
 import BlockChain.Block;
 import BlockChain.Blockchain;
 
+import BlockChain.Miner;
 import BlockChain.Transaction;
 import Users.SocketAction;
 import Users.UserFunctions;
@@ -20,6 +21,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
 import static Users.SocketAction.SocketRead;
@@ -38,11 +40,15 @@ public class NodeUser {
     static InetAddress master=null;
     static Timer timer=new Timer();
 
+    static Miner nodeUser;
+    static double totalBalance=-1.0;
 
-    public static void main(String[] args) throws IOException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalAccessException, BadPaddingException, SignatureException, InvalidAlgorithmParameterException, IllegalBlockSizeException, InterruptedException {
+    public static void main(String[] args) throws IOException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalAccessException, BadPaddingException, SignatureException, InvalidAlgorithmParameterException, IllegalBlockSizeException, InterruptedException, InvalidKeySpecException {
         blockchain = new Blockchain();
 
         Scanner scanner = new Scanner(System.in);
+
+        nodeUser = UserFunctions.loadKey();
 
         System.out.print("創建區塊鏈 or 繼承區塊練(create / load):\t");
         String option = scanner.nextLine();
@@ -66,7 +72,16 @@ public class NodeUser {
         host = scanner.nextLine();
 
         if(option.equals("create")){
+            System.out.print("Total money in this chain:\t");
+            while(totalBalance==-1.0){
+                totalBalance = UserFunctions.setTotalBalance();
+            }
+
             Block block = MakeEmptyBlock("0",blockchain.blockchain.size());
+
+            // make transaction send total to nodeUser
+            Transaction firstTransaction = nodeUser.Make_Transaction("System", nodeUser.address, totalBalance, 0, "Total Balance");
+            block.Add_Transaction(firstTransaction);
             bufferChain.add(block);
         }
 
