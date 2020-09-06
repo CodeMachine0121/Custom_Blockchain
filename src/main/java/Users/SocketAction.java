@@ -16,7 +16,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Timer;
 
@@ -71,7 +73,9 @@ public class SocketAction {
         SocketWrite(command,socket);
 
         // send Transaction
+
         SocketWrite(transaction.Transaction_to_JSON().toString(),socket);
+
 
         // get response
         String response = SocketRead(socket);
@@ -164,7 +168,7 @@ public class SocketAction {
         UserFunctions.printOutBlockchain(chain,chainSize);
         socket.close();
     }
-    public static void mineBlock(String remoteHost, Block block, Miner miner) throws IOException, InterruptedException, InvalidKeyException, SignatureException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalAccessException {
+    public static void mineBlock(String remoteHost, Block block, Miner miner) throws IOException, InterruptedException, InvalidKeyException, SignatureException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalAccessException, NoSuchProviderException, InvalidKeySpecException {
 
         Socket socket = new Socket(remoteHost, SERVER_PORT);
         Thread.sleep(TIME_DELAY);

@@ -17,10 +17,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
@@ -43,12 +40,14 @@ public class NodeUser {
     static Miner nodeUser;
     static double totalBalance=-1.0;
 
-    public static void main(String[] args) throws IOException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalAccessException, BadPaddingException, SignatureException, InvalidAlgorithmParameterException, IllegalBlockSizeException, InterruptedException, InvalidKeySpecException {
+    public static void main(String[] args) throws IOException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalAccessException, BadPaddingException, SignatureException, InvalidAlgorithmParameterException, IllegalBlockSizeException, InterruptedException, InvalidKeySpecException, NoSuchProviderException {
         blockchain = new Blockchain();
 
         Scanner scanner = new Scanner(System.in);
 
         nodeUser = UserFunctions.loadKey();
+        if(nodeUser==null)
+            System.exit(-15);
 
         System.out.print("創建區塊鏈 or 繼承區塊練(create / load):\t");
         String option = scanner.nextLine();
@@ -183,18 +182,33 @@ public class NodeUser {
 
                         }
                         else if(cmd.equals("commit")){
+// Wallet commit transaction to Node
+                            System.out.println("\t提交交易");
 
                             // get transaction String
                             String Stransaction = SocketRead(clientSocket);
+
                             Transaction t = UserFunctions.Convert2Transaction(Stransaction);
 
+
                             String result="";
-                            if(bufferChain.get(0).transactions.size() < Block.block_limitation)
+
+
+                            // Verify the signature of transaction
+                            if(!Transaction.Is_transactions_valid(t)){
+                                System.out.println("\t\t交易簽章錯誤");
+                                result = "signature wrong";
+                            }
+                            else if(bufferChain.get(0).transactions.size() < Block.block_limitation){
                                 // Add transaction to block
                                 bufferChain.get(0).Add_Transaction(t);
                                 // It mean block is full, needs to be mine
-                            else
+                            }
+                            else{
+                                System.out.println("\t\t交易已滿 等待挖掘");
                                 result="exceed length";
+                            }
+
                             // send result
                             SocketAction.SocketWrite(result, clientSocket);
                         }
@@ -306,7 +320,7 @@ public class NodeUser {
                             System.out.println("\t測試連線\t");
                         }
                     }
-                    catch (IOException | NoSuchAlgorithmException | InvalidKeyException | IllegalAccessException | SignatureException | InterruptedException e) {
+                    catch (IOException | NoSuchAlgorithmException | InvalidKeyException | IllegalAccessException | SignatureException | InterruptedException | InvalidKeySpecException | NoSuchProviderException e) {
                         try {
                             clientSocket.close();
                         } catch (IOException ioException) {

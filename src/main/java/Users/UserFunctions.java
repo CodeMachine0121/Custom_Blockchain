@@ -12,14 +12,11 @@ import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
-import static BlockChain.Miner.Load_Mnemonic;
+
 
 public class UserFunctions {
     static Scanner scanner = new Scanner(System.in);
@@ -30,20 +27,23 @@ public class UserFunctions {
         String option = scanner.nextLine().strip().toLowerCase();
 
         String path="";
-        Miner newMiner;
+
 
         if("create".equals(option)) {
 
-            newMiner = new Miner();
+            Miner newMiner = new Miner();
             System.out.print("Enter the path to save mnemonic: ");
-            if (newMiner.Save_Mnemonic(scanner.nextLine(), newMiner.mnemonic, newMiner.publicKey))
+            if (newMiner.Save_Keystore(scanner.nextLine()))
                 return newMiner;
             else
                 return null;
         } else if("load".equals(option)){
             System.out.print("enter the path, saved the mnemonic\n\t:");
             path = scanner.nextLine().strip();
-            return Load_Mnemonic(path);
+            Miner user= new Miner();
+            user.Load_Keystore(path);
+
+            return user;
         }else{
             System.out.println("unKnown command");
         }
@@ -52,7 +52,7 @@ public class UserFunctions {
     }
 
     // For wallet users
-    public static Transaction makeTransaction(Miner user) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, UnsupportedEncodingException, SignatureException, IllegalAccessException, InvalidKeyException {
+    public static Transaction makeTransaction(Miner user) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, UnsupportedEncodingException, SignatureException, IllegalAccessException, InvalidKeyException, NoSuchProviderException, InvalidKeySpecException {
 
         // input information of transaction
         String sender = user.address;
@@ -126,7 +126,7 @@ public class UserFunctions {
         block.hash = jsonBlock.getString("hash");
         block.signature = jsonBlock.getString("signature");
         block.MerkletreeRoot = jsonBlock.getString("MerkleTree");
-        block.minerAddr = jsonBlock.getString("miner");
+        block.minerPublicKey = jsonBlock.getString("miner");
         return  block;
     }
     public static Transaction Convert2Transaction(String Strasaction) throws UnsupportedEncodingException, NoSuchAlgorithmException {

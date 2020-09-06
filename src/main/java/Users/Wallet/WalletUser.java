@@ -12,10 +12,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +22,7 @@ public class WalletUser {
 
     static final int EXIT_CODE=-15;
 
-    public static void main(String[] args) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalAccessException, InvalidAlgorithmParameterException, InvalidKeySpecException, InvalidKeyException, BadPaddingException, SignatureException, IllegalBlockSizeException, InterruptedException {
+    public static void main(String[] args) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalAccessException, InvalidAlgorithmParameterException, InvalidKeySpecException, InvalidKeyException, BadPaddingException, SignatureException, IllegalBlockSizeException, InterruptedException, NoSuchProviderException {
 
         Scanner scanner = new Scanner(System.in);
 
@@ -69,6 +66,8 @@ public class WalletUser {
                 }
             }
             else if("Maketransaction".equals(command)){
+                user.balance = SocketAction.getBalance(remoteHost,user.address);
+
                 if(user == null ) {
                     System.out.println("no wallet import");
                     continue;
@@ -86,17 +85,24 @@ public class WalletUser {
                 UserFunctions.List_Transaction(transactions);
             }
             else if("commit".equals(command)){
-                if(user.balance==-1 || user ==null){
-                    System.out.println("尚未取得餘額 or 無錢包印入");
+                if(user ==null){
+                    System.out.println("無錢包印入");
                     continue;
                 }
+                //user.balance = SocketAction.getBalance(remoteHost,user.address);
+                Thread.sleep(100);
+
 
                 // commit transaction
                 String response = SocketAction.commitTransaction(remoteHost,transactions.get(0));
 
                 if("exceed length".equals(response)){
                     System.out.println("該區塊交易已滿");
-                }else{
+                }else if("signature wrong".equals(response)){
+                    System.out.println("交易簽章錯誤");
+                    transactions.remove(0);
+                }
+                else {
                     System.out.println("交易成功提交");
                     transactions.remove(0);
                 }

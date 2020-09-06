@@ -1,10 +1,12 @@
 package BlockChain;
 
 
+import Util.KeyGenerater;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -65,9 +67,23 @@ public class Blockchain {
         return true;
     }
     // Use to check that is the  newest block current
-    public  Boolean Is_Block_current(Block new_block){
+    public  Boolean Is_Block_current(Block new_block) throws IllegalAccessException, NoSuchAlgorithmException, UnsupportedEncodingException, SignatureException, InvalidKeyException, InvalidKeySpecException, NoSuchProviderException {
         String previous_hash = this.blockchain.get(blockchain.size()-1).hash;
-        if(new_block.previous_hash.equals(previous_hash))
+
+        // check all transactions' signature
+        boolean flag=false;
+        for(Transaction t : new_block.transactions){
+            if(!Transaction.Is_transactions_valid(t) )
+                flag=false;
+            flag=true;
+        }
+
+        // check block signature
+        if(!KeyGenerater.Verify_Signature(new_block.signature, new_block.minerPublicKey,new_block.hash) )
+            flag=false;
+
+
+        if(new_block.previous_hash.equals(previous_hash) && flag)
             return true;
         else
             return false;
@@ -116,7 +132,7 @@ public class Blockchain {
             Jblock.put("previous hash",block.previous_hash);
             Jblock.put("hash",block.hash);
             Jblock.put("difficulty",block.difiifulty);
-            Jblock.put("miner",block.minerAddr);
+            Jblock.put("miner",block.minerPublicKey);
             Jblock.put("MerkleTree",block.MerkletreeRoot);
 
 

@@ -1,11 +1,12 @@
 package BlockChain;
 
+import Util.KeyGenerater;
 import Util.StringUtil;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
 
 public class Transaction {
 
@@ -52,5 +53,16 @@ public class Transaction {
 
     public double Get_amount(){return this.amount;}
     public  String Get_messages(){return this.messages;}
+
+
+    public static Boolean Is_transactions_valid(Transaction transaction) throws InvalidKeySpecException, SignatureException, NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException, IllegalAccessException, NoSuchProviderException {
+        JSONObject  transactionJsonobject = transaction.Transaction_to_JSON();
+
+        String publicKeyString = transactionJsonobject.getString("publicKey");
+
+        boolean r = KeyGenerater.Verify_Signature(transactionJsonobject.getString("txnsign"),publicKeyString,transactionJsonobject.getString("messages"));
+        return r;
+    }
+
 
 }

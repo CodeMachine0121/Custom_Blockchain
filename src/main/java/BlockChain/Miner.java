@@ -1,5 +1,6 @@
 package BlockChain;
 
+import Util.KeyGenerater;
 import Util.StringUtil;
 
 import javax.crypto.BadPaddingException;
@@ -16,44 +17,46 @@ import java.util.logging.Logger;
 
 public class Miner {
 
+    private KeyGenerater keyGenerater;
+
     public String address;
     public String publicKey;
-    public String privateKey;
+    private String privateKey;
     public double balance;
-    private StringUtil stringUtil;
-    private Logger logger = Logger.getLogger(Miner.class.getName());
 
-    public List<String> mnemonic;
-    private KeyPair kp;
+
+
+
     public Miner() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalAccessException, NoSuchPaddingException, IOException {
-        stringUtil = new StringUtil();
-        this.kp = stringUtil.keypair;
-        this.publicKey = stringUtil.GetPublicKeyStr(kp);
-        this.privateKey = stringUtil.GetPrivateKeyStr(kp);
 
-        this.address = stringUtil.Generate_Address(this.publicKey);
+        KeyGenerater keyGenerater = new KeyGenerater();
+
+        this.publicKey = keyGenerater.Get_PublicKey_String();
+        this.privateKey = keyGenerater.Get_PrivateKey_String();
+
+        this.address = keyGenerater.Get_Address(publicKey);
         this.balance = -1;
 
-        //OutputKeys(this.publicKey,this.privateKey);
-        this.mnemonic = stringUtil.Get_Mnemonic(this.privateKey);
+
     }
 //-----------------------------------------------------------------------------------------------------------
     // transaction function
 //----------------------------------------------------------------------------------------------------------
-    public Transaction Make_Transaction(String sender, String receiver, double amount, double fee, String messages) throws NoSuchPaddingException, NoSuchAlgorithmException, UnsupportedEncodingException, IllegalBlockSizeException, InvalidKeyException, SignatureException, BadPaddingException, IllegalAccessException {
-        String signature = stringUtil.Get_Signature(messages,kp.getPrivate());
-        Transaction t =  new Transaction(sender,receiver,amount,fee,messages,stringUtil.GetPublicKeyStr(kp),signature);
+    public Transaction Make_Transaction(String sender, String receiver, double amount, double fee, String messages) throws NoSuchPaddingException, NoSuchAlgorithmException, UnsupportedEncodingException, IllegalBlockSizeException, InvalidKeyException, SignatureException, BadPaddingException, IllegalAccessException, NoSuchProviderException, InvalidKeySpecException {
+        String signature = KeyGenerater.Sign_Message(messages,this.privateKey);
+
+        Transaction t =  new Transaction(sender,receiver,amount,fee,messages,publicKey,signature);
         return t;
     }
-
-    public String MakeBlockSignature(String data) throws SignatureException, NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
-        return StringUtil.Get_Signature(data,kp.getPrivate());
+    public String Make_Block_Signature(String data) throws SignatureException, NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException, NoSuchProviderException, InvalidKeySpecException {
+        return KeyGenerater.Sign_Message(data,this.privateKey);
     }
+
 //-----------------------------------------------------------------------------------------------------------
     // mining function
 //----------------------------------------------------------------------------------------------------------
 
-    public double Mining_Mode(Block block) throws UnsupportedEncodingException, NoSuchAlgorithmException, IllegalAccessException, NoSuchPaddingException, SignatureException, InvalidKeyException {
+    public double Mining_Mode(Block block) throws UnsupportedEncodingException, NoSuchAlgorithmException, IllegalAccessException, NoSuchPaddingException, SignatureException, InvalidKeyException, NoSuchProviderException, InvalidKeySpecException {
        double t = block.calculateHash(this);
        block.set_MerkelTree_Root(block.transactions);
        return t;
@@ -64,18 +67,14 @@ public class Miner {
     // restoring function
 //----------------------------------------------------------------------------------------------------------
 
-    public  static  Boolean Save_Mnemonic (String path, List<String>Mnemonic,String publicKey) throws IOException {
-        String m="";
-        for(String mn : Mnemonic){
-            m+=mn+" ";
-        }
+    public  Boolean Save_Keystore (String path) throws IOException {
 
-        File file = new File(path+"/mnemonic.txt");
+        File file = new File(path+"/keystore.txt");
         if(file.createNewFile()){
             System.out.println("Create file....");
-            FileWriter writer = new FileWriter(path+"/mnemonic.txt");
-            writer.write(m+"\n");
-            writer.write(publicKey);
+            FileWriter writer = new FileWriter(path+"/keystore.txt");
+            writer.write(this.privateKey+"\n");
+            writer.write(this.publicKey);
             writer.close();
             return true;
         }else{
@@ -85,8 +84,8 @@ public class Miner {
 
     }
 
-    public static Miner  Load_Mnemonic(String path) throws IOException, IllegalAccessException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeySpecException {
-        File file = new File(path+"/mnemonic.txt");
+    public void  Load_Keystore(String path) throws IOException, IllegalAccessException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeySpecException {
+        File file = new File(path+"/keystore.txt");
         String data="",data2="";
         try{
             Scanner scanner = new Scanner(file);
@@ -94,16 +93,15 @@ public class Miner {
             data2 = scanner.nextLine();
         }catch (Exception e){
             System.out.println("No file found");
-            return null;
+            return ;
         }
-        List<String> mnemonic = Arrays.asList(data.split(" "));
-        Miner user = new Miner();
-        StringUtil stringUtil = new StringUtil();
-        user.privateKey = stringUtil.Reverse_Mnemonic(mnemonic);
-        user.publicKey = data2;
-        user.address = stringUtil.Generate_Address(user.publicKey);
+
+        this.privateKey = data;
+        this.publicKey = data2;
+
+        this.address = keyGenerater.Get_Address(this.publicKey);
+
         System.out.println("Loading user successfully");
-        return user;
     }
 
 

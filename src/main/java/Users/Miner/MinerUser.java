@@ -12,10 +12,7 @@ import Users.UserFunctions;
 import javax.crypto.NoSuchPaddingException;
 import java.io.*;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Scanner;
 
@@ -24,7 +21,7 @@ public class MinerUser {
 
     static final int EXIT_CODE=-15;
 
-    public static void main(String[] args) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalAccessException, InvalidAlgorithmParameterException, InvalidKeySpecException, SignatureException, InvalidKeyException, InterruptedException {
+    public static void main(String[] args) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalAccessException, InvalidAlgorithmParameterException, InvalidKeySpecException, SignatureException, InvalidKeyException, InterruptedException, NoSuchProviderException {
 
         Scanner scanner = new Scanner(System.in);
         Miner miner = UserFunctions.loadKey();

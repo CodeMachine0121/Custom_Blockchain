@@ -9,6 +9,7 @@ import javax.crypto.NoSuchPaddingException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
@@ -16,12 +17,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+
+
 public class Block {
         public static Logger logger = Logger.getLogger(Block.class.getName());
 
         public  String hash;
         public  String previous_hash;
-        public String minerAddr;
+        public String minerPublicKey;
         public  int nonce;
         public  int difiifulty;
         public  long timestamp;
@@ -46,11 +49,11 @@ public class Block {
                 this.difiifulty = difficulty;
                 this.MerkletreeRoot = "";
                 this.fee=0;
-                this.minerAddr = "";
+                this.minerPublicKey = "";
                 this.signature="";
         }
 // mine the block
-        public double calculateHash(Miner miner) throws UnsupportedEncodingException, NoSuchAlgorithmException, IllegalAccessException, NoSuchPaddingException, SignatureException, InvalidKeyException {
+        public double calculateHash(Miner miner) throws UnsupportedEncodingException, NoSuchAlgorithmException, IllegalAccessException, NoSuchPaddingException, SignatureException, InvalidKeyException, NoSuchProviderException, InvalidKeySpecException {
 
                 String calculatedhash;
 
@@ -77,9 +80,9 @@ public class Block {
                                         flag=false;
                         if(flag){
                                 this.hash = calculatedhash;
-                                this.minerAddr=miner.address;
+                                this.minerPublicKey=miner.publicKey;
                                 cost_time = Math.round((new Date().getTime() - start) / 1000);
-                                this.signature = miner.MakeBlockSignature(this.hash);
+                                this.signature = miner.Make_Block_Signature(this.hash);
                                 logger.info("Hash found: "+this.hash+" @ difficulty: "+this.difiifulty+",  time cost: " + cost_time );
                                 break;
                         }
@@ -116,14 +119,8 @@ public class Block {
                 return hashes;
         }
         // Function to check is transaction valid
-        public Boolean Is_transactions_valid() throws InvalidKeySpecException, SignatureException, NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException, IllegalAccessException {
 
-                Transaction transaction = this.transactions.get(transactions.size()-1);
 
-                JSONObject  jsonObject = transaction.Transaction_to_JSON();
-
-                return StringUtil.verify_Signature(jsonObject);
-        }
 
         public void set_MerkelTree_Root(List<Transaction> transactionList) throws NoSuchAlgorithmException, IllegalAccessException, NoSuchPaddingException, UnsupportedEncodingException {
                 // 打包前使用
@@ -142,7 +139,7 @@ public class Block {
                 json.put("previous hash",previous_hash);
                 json.put("hash",hash);
                 json.put("difficulty",difiifulty);
-                json.put("miner",minerAddr);
+                json.put("miner",minerPublicKey);
                 json.put("MerkleTree",this.MerkletreeRoot);
 
                 JSONObject jtxn = new JSONObject();
