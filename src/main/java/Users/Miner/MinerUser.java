@@ -14,6 +14,8 @@ import java.io.*;
 
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class MinerUser {
@@ -21,48 +23,96 @@ public class MinerUser {
 
     static final int EXIT_CODE=-15;
 
-    public static void main(String[] args) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalAccessException, InvalidAlgorithmParameterException, InvalidKeySpecException, SignatureException, InvalidKeyException, InterruptedException, NoSuchProviderException {
+    static Miner miner;
+    static Scanner scanner;
+    static String remoteHost;
+    static Block block;
+    static String jno;
 
-        Scanner scanner = new Scanner(System.in);
-        Miner miner = UserFunctions.loadKey();
-        String remoteHost ="";
+    static Map<String,Runnable> actions;
 
+    public MinerUser() throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalAccessException, InvalidAlgorithmParameterException, InvalidKeySpecException {
+
+        scanner = new Scanner(System.in);
+        miner = UserFunctions.loadKey();
+        remoteHost ="";
+// if miner can't load
         if(miner==null){
-            return;
+            System.exit(EXIT_CODE);
         }
 
-        Block block = null;
-        String jno="";
+        block = null;
+        jno="";
+
+        //  define actions
+        actions = new HashMap<>();
+        actions.put("",()->{
+            try {
+                Connect_Node();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        actions.put("ask-block",()->{
+            try {
+                AskBlock();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        actions.put("mine",()->{
+            try {
+                Mine();
+            } catch (IOException | NoSuchAlgorithmException | InvalidKeyException | InterruptedException | IllegalAccessException | NoSuchPaddingException | NoSuchProviderException | SignatureException | InvalidKeySpecException e) {
+                e.printStackTrace();
+            }
+        });
+        actions.put("get-blockchain",()->{
+            try {
+                Get_Blockchain();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+
+
+    public static void main(String[] args) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalAccessException, InvalidAlgorithmParameterException, InvalidKeySpecException {
+
+        new MinerUser();
 
         // input ip
-        if("".equals(remoteHost)){
-            System.out.println("輸入節點:");
-            System.out.print("\tip:\t");
-            remoteHost = scanner.nextLine().strip();
-
-            if(!SocketAction.TestConnection(remoteHost)) {
-                System.exit(EXIT_CODE);
-            }
-        }
-
+        actions.get(remoteHost).run();
 
         String command="";
         do {
             System.out.print("[*] ");
             command = scanner.nextLine().strip();
-
-            if ("ask-block".equals(command)) {
-                block = SocketAction.getBlock(remoteHost);
-            }
-            else if ("mine".equals(command)) {
-                SocketAction.mineBlock(remoteHost, block, miner);
-                block=null;
-            }
-            else if(command.equals("get-blockchain")){
-                SocketAction.getBlockchain(remoteHost);
-            }
+            actions.get(command).run();
         } while (true);
 
     }
 
+    public static void Connect_Node() throws IOException {
+        System.out.println("輸入節點:");
+        System.out.print("\tip:\t");
+        remoteHost = scanner.nextLine().strip();
+
+        if(!SocketAction.TestConnection(remoteHost)) {
+            System.exit(EXIT_CODE);
+        }
+    }
+
+    public static void AskBlock() throws IOException, InterruptedException {
+        block = SocketAction.getBlock(remoteHost);
+    }
+
+    public static void Mine() throws IOException, NoSuchAlgorithmException, InvalidKeyException, InterruptedException, IllegalAccessException, NoSuchPaddingException, NoSuchProviderException, SignatureException, InvalidKeySpecException {
+        SocketAction.mineBlock(remoteHost, block, miner);
+        block=null;
+    }
+    public static void Get_Blockchain() throws IOException, InterruptedException {
+        SocketAction.getBlockchain(remoteHost);
+    }
 }

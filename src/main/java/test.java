@@ -10,41 +10,42 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class test {
 
+
+
+
+    static Map action;
     public test() throws NoSuchAlgorithmException, IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalAccessException {
+        action = new HashMap<>();
+        action.put("plus",plus());
+        action.put(minus(),"minus");
+        action.put(time(),"time");
+        action.put(divide(),"divide");
 
     }
 
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalAccessException, InvalidKeyException, BadPaddingException, SignatureException, IllegalBlockSizeException, InvalidKeySpecException, NoSuchProviderException {
 
+        new test();
+        System.out.println(action.get("plus"));
 
-        KeyGenerater keyGenerater = new KeyGenerater();
-
-        PublicKey publicKey = keyGenerater.Get_PublicKey();
-
-
-
-        System.out.print("Public key:\t");
-        System.out.println(keyGenerater.Get_PublicKey_String());
-        System.out.print("Public key binary:\t");
-        System.out.println(new BigInteger( 1,keyGenerater.Get_PublicKey_Bytes()).toString(2) );
-
-
-        PrivateKey privateKey = keyGenerater.Get_PrivateKey();
-        System.out.print("Private Key:\t");
-        System.out.println(keyGenerater.Get_PrivateKey_String());
-        System.out.print("Private Key binary:\t");
-        System.out.println(new BigInteger( 1,keyGenerater.Get_PrivateKey_Bytes()).toString(2));
-
-
-        String message = "hello";
-        String signature = KeyGenerater.Sign_Message(message,keyGenerater.Get_PrivateKey_String());
-
-        System.out.print("Verify signature:\t");
-        System.out.println(KeyGenerater.Verify_Signature(signature,keyGenerater.Get_PublicKey_String(),message));
-
+    }
+    static int plus(){
+        int a=1;
+        return a;
+    }
+    static int minus(){
+        return 1;
+    }
+    static int time(){
+        return 2;
+    }
+    static int divide(){
+        return 3;
     }
 }
