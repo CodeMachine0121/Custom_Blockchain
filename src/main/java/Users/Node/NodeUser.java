@@ -40,7 +40,72 @@ public class NodeUser {
     static Miner nodeUser;
     static double totalBalance=-1.0;
 
+
+    // *****
+    static Socket clientSocket;
+    static int BlockNo;
+    static Map<String,Runnable> actions;
+
+    public NodeUser(){
+        actions = new HashMap<>();
+
+        actions.put("ask-block",()->{
+            try {
+                Ask_Block();
+            } catch (InterruptedException | IOException | SignatureException | NoSuchAlgorithmException | InvalidKeyException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
+        actions.put("mine",()->{
+            try {
+                Mine_Block();
+            } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException | NoSuchProviderException | SignatureException | InvalidKeyException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
+        actions.put("commit",()->{
+            try {
+                Commit_Transaction();
+            } catch (IOException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException | IllegalAccessException | InvalidKeyException | SignatureException e) {
+                e.printStackTrace();
+            }
+        });
+        actions.put("balance",()->{
+            try {
+                Get_Balance();
+            } catch (IOException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
+        actions.put("ask-blockchain",()->{
+            try {
+                Update_Blockchain();
+            } catch (IOException | InterruptedException | IllegalAccessException | NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+        });
+        actions.put("changeMaster",()->{
+            try {
+                Change_Master();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+        });
+        actions.put("get-blockchain",()->{
+            try {
+                Get_Blockchain();
+            } catch (IllegalAccessException | IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        actions.put("test", NodeUser::Test_Connection);
+
+    }
+
+
     public static void main(String[] args) throws IOException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalAccessException, BadPaddingException, SignatureException, InvalidAlgorithmParameterException, IllegalBlockSizeException, InterruptedException, InvalidKeySpecException, NoSuchProviderException {
+        new NodeUser();
+
         blockchain = new Blockchain();
 
         Scanner scanner = new Scanner(System.in);
@@ -104,7 +169,7 @@ public class NodeUser {
 
         while(true) {
 
-            final Socket clientSocket=socket.accept();
+            clientSocket=socket.accept();
 
             if(bufferChain.size()==0){
                 Block block;
@@ -116,7 +181,7 @@ public class NodeUser {
                 @Override
                 public void run() {
                     // Get block number
-                    int BlockNo=blockchain.blockchain.size();
+                    BlockNo=blockchain.blockchain.size();
 
                     System.out.println("接收新連線: " + clientSocket.getInetAddress());
                     String cmd = null;
@@ -124,208 +189,10 @@ public class NodeUser {
                         // get command
                         cmd = SocketRead(clientSocket);
 
-                        // 要先有transaction 才能傳
-                        if (cmd.equals("ask-block")) {
-
-                            System.out.print("\t要求節點=>\t");
-                            if(bufferChain.get(0).transactions.size()==0){
-                                SocketAction.SocketWrite("No transaction", clientSocket);
-                                System.out.println("No transaction in block");
-                                throw new IOException();
-                            }else
-                                System.out.println(bufferChain.get(0).get_Block_to_Json(BlockNo));
-
-                            // send block no
-                            SocketAction.SocketWrite(String.valueOf(BlockNo), clientSocket);
-
-                            // send block
-                            Thread.sleep(100);
-                            SocketAction.SocketWrite(bufferChain.get(0).get_Block_to_Json(BlockNo), clientSocket);
-                        }
-                        else if (cmd.equals("mine")) { // 提交區塊
-                            SocketAction.SocketWrite(String.valueOf(BlockNo), clientSocket);
-
-                            // receive new block
-                            String jblock = SocketRead(clientSocket);
-                            if (jblock.equals("no"))
-                                throw new IOException();
-
-                            Block new_block = UserFunctions.Convert2Block(jblock, BlockNo);
-                            System.out.println("新區塊: " );
-                            UserFunctions.printOutBlock(jblock,BlockNo);
-
-
-                            // recieve difficulty
-                            String res_difficulty = SocketRead(clientSocket);
-                            // set difficulty
-                            Blockchain.difficulty = Integer.parseInt(res_difficulty);
-
-
-                            Boolean result=false;
-                            // check if new block valid, Genesis不需要檢查
-                            if(BlockNo==0)
-                                result=true;
-                            else
-                                result = blockchain.Is_Block_current(new_block);
-
-                            if (result) {
-                                blockchain.Add_Block_to_Chain(new_block);
-
-                                bufferChain.remove(0);
-                                Block newBufferBlock = new Block(new_block.hash,Blockchain.difficulty);
-                                bufferChain.add(newBufferBlock);
-
-                                SocketAction.SocketWrite(blockchain.get_All_Blocks_JSON(), clientSocket);
-                            } else {
-                                SocketAction.SocketWrite("no", clientSocket);
-                            }
-
-                        }
-                        else if(cmd.equals("commit")){
-// Wallet commit transaction to Node
-                            System.out.println("\t提交交易");
-
-                            // get transaction String
-                            String Stransaction = SocketRead(clientSocket);
-
-                            Transaction t = UserFunctions.Convert2Transaction(Stransaction);
-
-
-                            String result="";
-
-
-                            // Verify the signature of transaction
-                            if(!Transaction.Is_transactions_valid(t)){
-                                System.out.println("\t\t交易簽章錯誤");
-                                result = "signature wrong";
-                            }
-                            else if(bufferChain.get(0).transactions.size() < Block.block_limitation){
-                                // Add transaction to block
-                                bufferChain.get(0).Add_Transaction(t);
-                                // It mean block is full, needs to be mine
-                            }
-                            else{
-                                System.out.println("\t\t交易已滿 等待挖掘");
-                                result="exceed length";
-                            }
-
-                            // send result
-                            SocketAction.SocketWrite(result, clientSocket);
-                        }
-                        else if(cmd.equals("balance")){
-                            System.out.print("\t要求餘額=>\t");
-
-                            // get Address
-                            String Address= SocketRead(clientSocket);
-
-                            // send balance
-                            double balance = CalculateBalance(Address);
-                            SocketAction.SocketWrite(String.valueOf(balance), clientSocket);
-
-                            System.out.println(balance);
-                        }
-                        else if(cmd.equals("ask-blockchain")){
-                            Thread.sleep(100);
-                            System.out.print("\t要求區塊鏈=>\n\t\t");
-
-                            if(blockchain.blockchain.size()==0){
-                                SocketAction.SocketWrite("No chain in this node", clientSocket);
-                                throw new IOException();
-                            }else{
-                                SocketAction.SocketWrite("I have chain", clientSocket);
-                            }
-
-                            // 確定 自己的 blockchain size 大於 目前的 number再傳送
-                            // Get blockchain size
-                            int bno = Integer.parseInt(SocketRead(clientSocket));
-                            int localsize = blockchain.blockchain.size();
-
-                            System.out.println("client size: "+bno);
-                            System.out.println("\t\tlocal size:"+blockchain.blockchain.size());
-
-                            // send response
-                            if(bno>localsize){ // client longer
-                                SocketAction.SocketWrite("Ur chain longer", clientSocket);
-                                // 須與該節點要求區塊練
-
-                                // get new blockchain
-                                String sblockchain = SocketRead(clientSocket);
-                                System.out.println("get new chain\n\t"+sblockchain);
-
-                                // get new blockchain size
-                                int blocksize = Integer.parseInt(SocketRead(clientSocket));
-                                System.out.println("new size: "+blocksize);
-
-                                // 設定排程 固定跟client要求區塊鏈
-                                System.out.println("變更主節點: "+clientSocket.getInetAddress());
-
-                                // 之後必須統一port
-                                timer = SetTimer(clientSocket.getInetAddress());
-
-                                // 確定此時有無 主節點存在
-                                /*
-                                 *  有: 取消自身timer 回傳給主節點要求更換
-                                 *  無: 掠過直接設定主節點
-                                 * */
-                                if(master!=null){
-                                    CancelTimer(timer);
-                                    Socket mastersocket = new Socket(master,port);
-                                    Thread.sleep(100);
-                                    SocketAction.SocketWrite("changeMaster", mastersocket);
-                                    mastersocket.close();
-                                }
-
-                                // 設定master
-                                master = clientSocket.getInetAddress();
-
-                                blockchain.blockchain=UserFunctions.Convert2Blockchain(sblockchain,blocksize);
-                                // 更改 buffer block previous hash
-                                bufferChain.get(0).previous_hash=blockchain.blockchain.get(blockchain.blockchain.size()-1).hash;
-
-                                throw new IOException();
-                            }
-                            else if(bno==localsize){
-                                SocketAction.SocketWrite("same length", clientSocket);
-                                throw new IOException();
-                            }
-                            else{
-                                SocketAction.SocketWrite("longer", clientSocket);
-                            }
-
-
-                            // Send blockchain
-                            Thread.sleep(100);
-                            String sblockchain = blockchain.get_All_Blocks_JSON();
-                            SocketAction.SocketWrite(sblockchain, clientSocket);
-
-                            Thread.sleep(100);
-                            // 如果自己的鏈比較長=> send blockchain size
-                            SocketAction.SocketWrite(String.valueOf(localsize), clientSocket);
-
-
-                        }
-                        else if(cmd.equals("changeMaster")){
-                            System.out.println("更換主節點");
-                            master = clientSocket.getInetAddress();
-                            timer = SetTimer(master);
-                        }
-
-                        else if(cmd.equals("get-blockchain")){
-                            System.out.println("\t下載區塊鏈\t");
-                            SocketAction.SocketWrite(blockchain.get_All_Blocks_JSON(), clientSocket);
-                            Thread.sleep(100);
-                            SocketAction.SocketWrite(String.valueOf(BlockNo),clientSocket);
-                        }
-                        else if(cmd.equals("test")){
-                            System.out.println("\t測試連線\t");
-                        }
+                       actions.get(cmd).run();
                     }
-                    catch (IOException | NoSuchAlgorithmException | InvalidKeyException | IllegalAccessException | SignatureException | InterruptedException | InvalidKeySpecException | NoSuchProviderException e) {
-                        try {
-                            clientSocket.close();
-                        } catch (IOException ioException) {
-                            ioException.printStackTrace();
-                        }
+                    catch (IOException e) {
+                        e.printStackTrace();
                     }
                     finally {
                         try {
@@ -341,8 +208,213 @@ public class NodeUser {
         }
     }
 
+/* 指令 methods */
+    public static void Ask_Block() throws InterruptedException, IOException, SignatureException, NoSuchAlgorithmException, InvalidKeyException, IllegalAccessException {
+        System.out.print("\t要求節點=>\t");
+        if(bufferChain.get(0).transactions.size()==0){
+            SocketAction.SocketWrite("No transaction", clientSocket);
+            System.out.println("No transaction in block");
+        }else {
+            System.out.println(bufferChain.get(0).get_Block_to_Json(BlockNo));
+        }
+
+        // send block no
+        SocketAction.SocketWrite(String.valueOf(BlockNo), clientSocket);
 
 
+        // send block
+        Thread.sleep(100);
+        SocketAction.SocketWrite(bufferChain.get(0).get_Block_to_Json(BlockNo), clientSocket);
+    }
+
+    // 接收已計算好的區塊
+    public static void Mine_Block() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException, SignatureException, InvalidKeyException, IllegalAccessException {
+        SocketAction.SocketWrite(String.valueOf(BlockNo), clientSocket);
+
+        // receive new block
+        String jblock = SocketRead(clientSocket);
+        if (jblock.equals("no"))
+            throw new IOException();
+
+        Block new_block = UserFunctions.Convert2Block(jblock, BlockNo);
+        System.out.println("新區塊: " );
+        UserFunctions.printOutBlock(jblock,BlockNo);
+
+
+        // recieve difficulty
+        String res_difficulty = SocketRead(clientSocket);
+        // set difficulty
+        Blockchain.difficulty = Integer.parseInt(res_difficulty);
+
+
+        Boolean result=false;
+        // check if new block valid, Genesis不需要檢查
+        if(BlockNo==0)
+            result=true;
+        else
+            result = blockchain.Is_Block_current(new_block);
+
+        if (result) {
+            blockchain.Add_Block_to_Chain(new_block);
+
+            bufferChain.remove(0);
+            Block newBufferBlock = new Block(new_block.hash,Blockchain.difficulty);
+            bufferChain.add(newBufferBlock);
+
+            SocketAction.SocketWrite(blockchain.get_All_Blocks_JSON(), clientSocket);
+        } else {
+            SocketAction.SocketWrite("no", clientSocket);
+        }
+    }
+
+    // 接收 Wallet使用者的交易
+    public static void Commit_Transaction() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, IllegalAccessException, InvalidKeyException, SignatureException {
+        System.out.println("\t提交交易");
+
+        // get transaction String
+        String Stransaction = SocketRead(clientSocket);
+
+        Transaction t = UserFunctions.Convert2Transaction(Stransaction);
+
+
+        String result="";
+
+
+        // Verify the signature of transaction
+        if(!Transaction.Is_transactions_valid(t)){
+            System.out.println("\t\t交易簽章錯誤");
+            result = "signature wrong";
+        }
+        else if(bufferChain.get(0).transactions.size() < Block.block_limitation){
+            // Add transaction to block
+            bufferChain.get(0).Add_Transaction(t);
+            // It mean block is full, needs to be mine
+        }
+        else{
+            System.out.println("\t\t交易已滿 等待挖掘");
+            result="exceed length";
+        }
+
+        // send result
+        SocketAction.SocketWrite(result, clientSocket);
+    }
+
+    // 回應Wallet餘額
+    public static void Get_Balance() throws IOException, IllegalAccessException {
+        System.out.print("\t要求餘額=>\t");
+
+        // get Address
+        String Address= SocketRead(clientSocket);
+
+        // send balance
+        double balance = CalculateBalance(Address);
+        SocketAction.SocketWrite(String.valueOf(balance), clientSocket);
+
+        System.out.println(balance);
+    }
+
+    // 更新區塊鏈
+    public static void Update_Blockchain() throws IOException, InterruptedException, IllegalAccessException, NoSuchAlgorithmException {
+        Thread.sleep(100);
+        System.out.print("\t要求區塊鏈=>\n\t\t");
+
+        if(blockchain.blockchain.size()==0){
+            SocketAction.SocketWrite("No chain in this node", clientSocket);
+            throw new IOException();
+        }else{
+            SocketAction.SocketWrite("I have chain", clientSocket);
+        }
+
+        // 確定 自己的 blockchain size 大於 目前的 number再傳送
+        // Get blockchain size
+        int bno = Integer.parseInt(SocketRead(clientSocket));
+        int localsize = blockchain.blockchain.size();
+
+        System.out.println("client size: "+bno);
+        System.out.println("\t\tlocal size:"+blockchain.blockchain.size());
+
+        // send response
+        if(bno>localsize){ // client longer
+            SocketAction.SocketWrite("Ur chain longer", clientSocket);
+            // 須與該節點要求區塊練
+
+            // get new blockchain
+            String sblockchain = SocketRead(clientSocket);
+            System.out.println("get new chain\n\t"+sblockchain);
+
+            // get new blockchain size
+            int blocksize = Integer.parseInt(SocketRead(clientSocket));
+            System.out.println("new size: "+blocksize);
+
+            // 設定排程 固定跟client要求區塊鏈
+            System.out.println("變更主節點: "+clientSocket.getInetAddress());
+
+            // 之後必須統一port
+            timer = SetTimer(clientSocket.getInetAddress());
+
+            // 確定此時有無 主節點存在
+            /*
+             *  有: 取消自身timer 回傳給主節點要求更換
+             *  無: 掠過直接設定主節點
+             * */
+            if(master!=null){
+                CancelTimer(timer);
+                Socket mastersocket = new Socket(master,port);
+                Thread.sleep(100);
+                SocketAction.SocketWrite("changeMaster", mastersocket);
+                mastersocket.close();
+            }
+
+            // 設定master
+            master = clientSocket.getInetAddress();
+
+            blockchain.blockchain=UserFunctions.Convert2Blockchain(sblockchain,blocksize);
+            // 更改 buffer block previous hash
+            bufferChain.get(0).previous_hash=blockchain.blockchain.get(blockchain.blockchain.size()-1).hash;
+
+            throw new IOException();
+        }
+        else if(bno==localsize){
+            SocketAction.SocketWrite("same length", clientSocket);
+            throw new IOException();
+        }
+        else{
+            SocketAction.SocketWrite("longer", clientSocket);
+        }
+
+
+        // Send blockchain
+        Thread.sleep(100);
+        String sblockchain = blockchain.get_All_Blocks_JSON();
+        SocketAction.SocketWrite(sblockchain, clientSocket);
+
+        Thread.sleep(100);
+        // 如果自己的鏈比較長=> send blockchain size
+        SocketAction.SocketWrite(String.valueOf(localsize), clientSocket);
+
+    }
+
+    // 另一節點提出交換主從
+    public static void Change_Master() throws UnknownHostException {
+        System.out.println("更換主節點");
+        master = clientSocket.getInetAddress();
+        timer = SetTimer(master);
+    }
+
+    // 回應Miner目前區塊鏈
+    public static void Get_Blockchain() throws IllegalAccessException, IOException, InterruptedException {
+        System.out.println("\t下載區塊鏈\t");
+        SocketAction.SocketWrite(blockchain.get_All_Blocks_JSON(), clientSocket);
+        Thread.sleep(100);
+        SocketAction.SocketWrite(String.valueOf(BlockNo),clientSocket);
+    }
+
+    // 測試連線
+    public static void Test_Connection(){
+        System.out.println("\t測試連線\t");
+    }
+
+/* 指令會用到的 methods */
     private static Timer SetTimer(InetAddress remotehost) throws UnknownHostException {
         Remotehost=remotehost;
         timer =new Timer();
