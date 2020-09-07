@@ -26,7 +26,7 @@ public class WalletUser {
     static String remoteHost;
     static Map<String, Runnable> actions;
 
-    public WalletUser() throws NoSuchPaddingException, InterruptedException, NoSuchAlgorithmException, IOException, IllegalAccessException, InvalidAlgorithmParameterException, InvalidKeySpecException, NoSuchProviderException, BadPaddingException, SignatureException, IllegalBlockSizeException, InvalidKeyException {
+    public WalletUser()  {
 
         user=null;
         transactions = new ArrayList<>();
@@ -73,8 +73,7 @@ public class WalletUser {
         });
     }
 
-    public static void main(String[] args) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalAccessException, InvalidAlgorithmParameterException, InvalidKeySpecException, InvalidKeyException, BadPaddingException, SignatureException, IllegalBlockSizeException, InterruptedException, NoSuchProviderException {
-
+    public static void main(String[] args) {
         new WalletUser();
 
         // input ip
