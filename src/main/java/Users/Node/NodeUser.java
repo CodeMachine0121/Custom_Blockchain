@@ -315,7 +315,7 @@ public class NodeUser {
     }
 
     // 更新區塊鏈
-    public static void Update_Blockchain() throws IOException, InterruptedException, IllegalAccessException, NoSuchAlgorithmException {
+    public static void Update_Blockchain() throws IOException, InterruptedException, IllegalAccessException, NoSuchAlgorithmException  {
         Thread.sleep(100);
         System.out.print("\t要求區塊鏈=>\n\t\t");
 
