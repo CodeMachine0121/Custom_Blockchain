@@ -34,17 +34,17 @@ public class NodeMethod implements Methods{
     public  ArrayList<Block> bufferChain;
 
 
-     InetAddress master;
-     Timer timer;
+    InetAddress master;
+    Timer timer;
 
-     Miner nodeUser;
-     double totalBalance;
+    Miner nodeUser;
+    double totalBalance;
 
 
     // *****
-     Socket clientSocket;
-     int BlockNo;
-     Map<String,Runnable> actions;
+    Socket clientSocket;
+    int BlockNo;
+    Map<String,Runnable> actions;
 
 
     // 初始化 actions
