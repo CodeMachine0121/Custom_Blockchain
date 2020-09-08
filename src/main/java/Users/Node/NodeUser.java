@@ -116,6 +116,7 @@ public class NodeUser {
 
         System.out.print("創建區塊鏈 or 繼承區塊練(create / load):\t");
         String option = scanner.nextLine();
+
         if(option.equals("load")){
             // setting remote node
             System.out.println("須輸入遠端節點:");
