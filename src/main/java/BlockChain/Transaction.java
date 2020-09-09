@@ -10,9 +10,9 @@ import java.security.spec.InvalidKeySpecException;
 
 public class Transaction {
 
-    private String sender;
+    public String sender;
     public String receiver;
-    private double amount;
+    public double amount;
     public double fee;
     private String messages;
 

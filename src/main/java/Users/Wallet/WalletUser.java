@@ -172,4 +172,6 @@ public class WalletUser {
         }
         user.balance = SocketAction.getBalance(remoteHost,user.address);
     }
+
+
 }

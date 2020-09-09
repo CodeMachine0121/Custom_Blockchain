@@ -23,7 +23,7 @@ import java.util.*;
 import static Users.SocketAction.SocketRead;
 
 
-public class NodeMethod implements Methods{
+public class NodeMethod{
 
     public  String host;
     public  int port;
@@ -35,16 +35,16 @@ public class NodeMethod implements Methods{
 
 
     InetAddress master;
-    Timer timer;
+    public Timer timer;
 
-    Miner nodeUser;
+    public Miner nodeUser;
     double totalBalance;
 
 
     // *****
-    Socket clientSocket;
-    int BlockNo;
-    Map<String,Runnable> actions;
+    public Socket clientSocket;
+    public int BlockNo;
+    public Map<String,Runnable> actions;
 
 
     // 初始化 actions

@@ -104,6 +104,9 @@ public class SocketAction {
         return Balance;
     }
 
+
+
+
 //  For Miner user
     public static Block getBlock(String remoteHost) throws IOException, InterruptedException {
         Socket socket;

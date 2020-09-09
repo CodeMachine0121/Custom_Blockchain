@@ -1,4 +1,4 @@
-package Anonymous_Function;
+package Users.Node.Anonymous_Function;
 
 public class CertificateBlockchain {
 }
