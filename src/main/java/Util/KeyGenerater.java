@@ -79,10 +79,10 @@ public class KeyGenerater {
         return Base64.getEncoder().encodeToString(privateKey.getEncoded());
     }
     public static PrivateKey Get_PrivateKey(String privateKeyString) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
-       KeyFactory kf = KeyFactory.getInstance("EC");
-       byte[] bytes = Base64.getDecoder().decode(privateKeyString);
+        KeyFactory kf = KeyFactory.getInstance("EC");
+        byte[] bytes = Base64.getDecoder().decode(privateKeyString);
 
-       return kf.generatePrivate(new PKCS8EncodedKeySpec(bytes));
+        return kf.generatePrivate(new PKCS8EncodedKeySpec(bytes));
     }
     public byte[] Get_PrivateKey_Bytes(){
         return Base64.getDecoder().decode(this.Get_PrivateKey_String());
