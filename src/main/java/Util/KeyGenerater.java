@@ -1,20 +1,14 @@
 package Util;
 
-import org.bouncycastle.jcajce.provider.symmetric.ARC4;
-import org.bouncycastle.util.encoders.UTF8;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.swing.*;
-import java.awt.image.Kernel;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.security.*;
 import java.security.spec.*;
+import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Dictionary;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -85,10 +79,10 @@ public class KeyGenerater {
         return Base64.getEncoder().encodeToString(privateKey.getEncoded());
     }
     public static PrivateKey Get_PrivateKey(String privateKeyString) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
-       KeyFactory kf = KeyFactory.getInstance("EC");
-       byte[] bytes = Base64.getDecoder().decode(privateKeyString);
+        KeyFactory kf = KeyFactory.getInstance("EC");
+        byte[] bytes = Base64.getDecoder().decode(privateKeyString);
 
-       return kf.generatePrivate(new PKCS8EncodedKeySpec(bytes));
+        return kf.generatePrivate(new PKCS8EncodedKeySpec(bytes));
     }
     public byte[] Get_PrivateKey_Bytes(){
         return Base64.getDecoder().decode(this.Get_PrivateKey_String());
@@ -162,29 +156,31 @@ public class KeyGenerater {
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         cipher.init(Cipher.ENCRYPT_MODE,publicKey);
 
-        List<String> cipherText = new LinkedList<>();
+
         List<String> splitText = splitText(message,Cipher.ENCRYPT_MODE);
 
+        List<String> encrypText = new LinkedList<>();
         for(String msg: splitText){
+            // Byte 分割 -> Base64
             byte[] byteCipherText = cipher.doFinal(msg.getBytes());
-            cipherText.add(Base64.getEncoder().encodeToString(byteCipherText));
+            encrypText.add(Base64.getEncoder().encodeToString(byteCipherText));
         }
 
-        return String.join("",cipherText);
 
+        return String.join("",encrypText);
     }
 
-    public static String RSA_Decrypt(String cipherText,PrivateKey privateKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+    public static String RSA_Decrypt(String encryptText,PrivateKey privateKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         cipher.init(Cipher.DECRYPT_MODE,privateKey);
 
         List<String> Context = new LinkedList<>();
-        List<String> cTextList = splitText(cipherText,Cipher.DECRYPT_MODE);
-        for(String cText:cTextList){
-            // 少收一個0
 
-            byte[] byteCipherText = Base64.getDecoder().decode(cText);
-            byte[] byteContext = cipher.doFinal(byteCipherText);
+        List<String> encryptText_List = splitText(encryptText,Cipher.DECRYPT_MODE);
+
+        for(String cText:encryptText_List){
+            byte[] byteEncryptText = Base64.getDecoder().decode(cText);
+            byte[] byteContext = cipher.doFinal(byteEncryptText);
 
             Context.add(new String(byteContext));
         }
@@ -192,9 +188,9 @@ public class KeyGenerater {
         return String.join("",Context);
     }
 
+
     private static List<String> splitText(String message,int mode){
         final int SIZE=(mode == Cipher.ENCRYPT_MODE)? 50 : 88;
-
 
         char[] charMessage = message.toCharArray();
 
@@ -203,17 +199,16 @@ public class KeyGenerater {
         StringBuilder tmp = new StringBuilder();
 
         for(int i=0;i<charMessage.length;i++){
-            if(i%(SIZE-1)==0 && i!=0){
+            if(i%(SIZE)==0 && i!=0){
                 splitedStr.add(tmp.toString());
                 tmp = new StringBuilder();
+                tmp.append(charMessage[i]);
             }else{
                 tmp.append(charMessage[i]);
             }
         }splitedStr.add(tmp.toString());
 
-        for (String t:splitedStr){
-            System.out.println(t);
-        }
+
         return splitedStr;
     }
 

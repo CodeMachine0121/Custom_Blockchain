@@ -68,10 +68,10 @@ public class RegistrationMethod {
             userData.put("User_Transaction_Signature",t.messages);
 
             // encrypt user data
-            //String  cipher_User_Data = String.join("",KeyGenerater.RSA_Encrypt(userData.toString(), KeyGenerater.Get_RSA_PublicKey(nodeMethod.nodeUser.RSA_publicKey)));
+            String  encrypt_User_Data = KeyGenerater.RSA_Encrypt(userData.toString(), KeyGenerater.Get_RSA_PublicKey(nodeMethod.nodeUser.RSA_publicKey));
 
 
-            Transaction Anonymous = nodeMethod.nodeUser.Make_Transaction(nodeMethod.nodeUser.RSA_publicKey,t.sender,t.amount,t.fee,"");
+            Transaction Anonymous = nodeMethod.nodeUser.Make_Transaction(nodeMethod.nodeUser.RSA_publicKey,t.sender,t.amount,t.fee,encrypt_User_Data);
 
             // Add transaction to block
             nodeMethod.bufferChain.get(0).Add_Transaction(Anonymous);
