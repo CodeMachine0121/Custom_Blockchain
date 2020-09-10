@@ -1,23 +1,39 @@
 package Util;
 
-import java.awt.image.Kernel;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.UnsupportedEncodingException;
 import java.security.*;
 import java.security.spec.*;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.LinkedList;
+import java.util.List;
 
 public class KeyGenerater {
 
-    private KeyPair keypair;
-    private PrivateKey privateKey ;
-    private PublicKey publicKey;
+    private final KeyPair keypair;
+    private final PrivateKey privateKey ;
+    private final PublicKey publicKey;
 
 
-    public KeyGenerater(){
+    public KeyGenerater() throws NoSuchAlgorithmException {
         this.keypair = Get_KeyPair();
-        publicKey = keypair.getPublic();
-        privateKey = keypair.getPrivate();
+        this.publicKey = keypair.getPublic();
+        this.privateKey = keypair.getPrivate();
+
+
+        this.RSA_Keypair = Get_RSA_KeyPair();
+        this.RSA_PublicKey = this.RSA_Keypair.getPublic();
+        this.RSA_PrivateKey = this.RSA_Keypair.getPrivate();
     }
+
+
+//-----------------------------------------------------------------------------------------------------------
+    // ECDSA encryption (簽章)
+//----------------------------------------------------------------------------------------------------------
 
     private KeyPair Get_KeyPair(){
         try{
@@ -98,6 +114,103 @@ public class KeyGenerater {
         return ecdsaVerify.verify(Base64.getDecoder().decode(signature));
     }
 
+//-----------------------------------------------------------------------------------------------------------
+    // RSA encryption
+//----------------------------------------------------------------------------------------------------------
+
+
+    private final KeyPair RSA_Keypair;
+    private final PrivateKey RSA_PrivateKey ;
+    private final PublicKey RSA_PublicKey;
+
+    private KeyPair Get_RSA_KeyPair() throws NoSuchAlgorithmException {
+        KeyPairGenerator keyPairGenerator= KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(512);
+        return keyPairGenerator.generateKeyPair();
+    }
+
+    public PublicKey Get_RSA_PublicKey(){
+        return this.RSA_PublicKey;
+    }
+    public String Get_RSA_PublicKey_String(){
+        return Base64.getEncoder().encodeToString(this.RSA_PublicKey.getEncoded());
+    }
+    public static PublicKey Get_RSA_PublicKey(String publicKeyString) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        byte[] bytes = Base64.getDecoder().decode(publicKeyString);
+
+        return kf.generatePublic(new X509EncodedKeySpec(bytes));
+    }
+
+    public PrivateKey Get_RSA_PrivateKey(){return this.RSA_PrivateKey;}
+    public String Get_RSA_PrivateKey_String(){return Base64.getEncoder().encodeToString(this.RSA_PrivateKey.getEncoded());}
+    public static PrivateKey Get_RSA_PrivateKey(String privateKeyString) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        byte[] bytes = Base64.getDecoder().decode(privateKeyString);
+
+        return kf.generatePrivate(new PKCS8EncodedKeySpec (bytes));
+    }
+
+
+    public static String RSA_Encrypt(String message, PublicKey publicKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        cipher.init(Cipher.ENCRYPT_MODE,publicKey);
+
+
+        List<String> splitText = splitText(message,Cipher.ENCRYPT_MODE);
+
+        List<String> encrypText = new LinkedList<>();
+        for(String msg: splitText){
+            // Byte 分割 -> Base64
+            byte[] byteCipherText = cipher.doFinal(msg.getBytes());
+            encrypText.add(Base64.getEncoder().encodeToString(byteCipherText));
+        }
+
+
+        return String.join("",encrypText);
+    }
+
+    public static String RSA_Decrypt(String encryptText,PrivateKey privateKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        cipher.init(Cipher.DECRYPT_MODE,privateKey);
+
+        List<String> Context = new LinkedList<>();
+
+        List<String> encryptText_List = splitText(encryptText,Cipher.DECRYPT_MODE);
+
+        for(String cText:encryptText_List){
+            byte[] byteEncryptText = Base64.getDecoder().decode(cText);
+            byte[] byteContext = cipher.doFinal(byteEncryptText);
+
+            Context.add(new String(byteContext));
+        }
+
+        return String.join("",Context);
+    }
+
+
+    private static List<String> splitText(String message,int mode){
+        final int SIZE=(mode == Cipher.ENCRYPT_MODE)? 50 : 88;
+
+        char[] charMessage = message.toCharArray();
+
+        List<String> splitedStr = new LinkedList<>();
+
+        StringBuilder tmp = new StringBuilder();
+
+        for(int i=0;i<charMessage.length;i++){
+            if(i%(SIZE)==0 && i!=0){
+                splitedStr.add(tmp.toString());
+                tmp = new StringBuilder();
+                tmp.append(charMessage[i]);
+            }else{
+                tmp.append(charMessage[i]);
+            }
+        }splitedStr.add(tmp.toString());
+
+
+        return splitedStr;
+    }
 
 
 }
