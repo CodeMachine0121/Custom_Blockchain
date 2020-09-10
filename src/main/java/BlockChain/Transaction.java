@@ -14,7 +14,7 @@ public class Transaction {
     public String receiver;
     public double amount;
     public double fee;
-    private String messages;
+    public String messages;
 
     public String transaction_hash;
     public String publickey;

@@ -4,7 +4,7 @@ import io.netty.handler.codec.base64.Base64Encoder;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 import org.json.JSONObject;
 
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.*;
 import java.io.*;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +19,46 @@ import java.util.Scanner;
 
 
 public class StringUtil {
+// AES
+    public static SecretKey AES_GenerateKey() throws NoSuchAlgorithmException {
+
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        keyGenerator.init(128,new SecureRandom());
+        SecretKey secretKey = keyGenerator.generateKey();
+
+        byte[] iv = new byte[16];
+        SecureRandom prng = new SecureRandom();
+        prng.nextBytes(iv);
+
+        return secretKey;
+    }
+    public static String AES_Encrypt(SecretKey secretKey, String msg) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.ENCRYPT_MODE,secretKey);
+
+        byte[] byteCipherText = cipher.doFinal(msg.getBytes());
+        byte[] IV = cipher.getIV();
+
+        // Base 64 encode
+        String encodeCipherText=Base64.getEncoder().encodeToString(byteCipherText);
+        System.out.println("資訊加密結果:\t"+encodeCipherText);
+        return encodeCipherText;
+    }
+
+    public static String AES_Decrypt(SecretKey secretKey, String encodeCiphertext) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.DECRYPT_MODE,secretKey);
+
+        byte[] decodeCipherText = Base64.getDecoder().decode(encodeCiphertext);
+        byte[] decryptedText = cipher.doFinal(decodeCipherText);
+
+        String strDecryptedText = new String(decryptedText);
+        System.out.println("資訊解密結果\t"+strDecryptedText);
+
+        return strDecryptedText;
+    }
+
 
 //-----------------------------------------------------------------------------------------------------------
     // HASH encryption

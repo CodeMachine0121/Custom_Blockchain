@@ -5,6 +5,7 @@ import BlockChain.Transaction;
 import Users.Node.NodeMethod;
 import Users.SocketAction;
 import Users.UserFunctions;
+import Util.KeyGenerater;
 import org.json.JSONObject;
 
 import javax.crypto.BadPaddingException;
@@ -13,6 +14,7 @@ import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
 import static Users.SocketAction.SocketRead;
 
@@ -21,7 +23,9 @@ public class RegistrationMethod {
 
 
     NodeMethod nodeMethod;
+
     public RegistrationMethod() throws IOException, InterruptedException, NoSuchAlgorithmException, InvalidKeyException, SignatureException, IllegalAccessException, NoSuchPaddingException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException, IllegalBlockSizeException, InvalidKeySpecException {
+
         nodeMethod = new NodeMethod();
 
         nodeMethod.Setup_ServerNode();
@@ -59,11 +63,15 @@ public class RegistrationMethod {
         else if(nodeMethod.bufferChain.get(0).transactions.size() < Block.block_limitation){
 
             JSONObject userData = new JSONObject();
-            userData.put("publicKey",t.publickey);
-            userData.put("Signature",t.signature);
-            userData.put("Transaction_Signature",t.Transaction_to_JSON());
+            userData.put("User_PublicKey",t.publickey);
+            userData.put("User_Signature",t.signature);
+            userData.put("User_Transaction_Signature",t.messages);
 
-            Transaction Anonymous = nodeMethod.nodeUser.Make_Transaction("RBC",t.sender,t.amount,t.fee,userData.toString());
+            // encrypt user data
+            //String  cipher_User_Data = String.join("",KeyGenerater.RSA_Encrypt(userData.toString(), KeyGenerater.Get_RSA_PublicKey(nodeMethod.nodeUser.RSA_publicKey)));
+
+
+            Transaction Anonymous = nodeMethod.nodeUser.Make_Transaction(nodeMethod.nodeUser.RSA_publicKey,t.sender,t.amount,t.fee,"");
 
             // Add transaction to block
             nodeMethod.bufferChain.get(0).Add_Transaction(Anonymous);

@@ -80,7 +80,7 @@ public class Block {
                                         flag=false;
                         if(flag){
                                 this.hash = calculatedhash;
-                                this.minerPublicKey=miner.publicKey;
+                                this.minerPublicKey=miner.ECDSA_publicKey;
                                 cost_time = Math.round((new Date().getTime() - start) / 1000);
                                 this.signature = miner.Make_Block_Signature(this.hash);
                                 logger.info("Hash found: "+this.hash+" @ difficulty: "+this.difiifulty+",  time cost: " + cost_time );

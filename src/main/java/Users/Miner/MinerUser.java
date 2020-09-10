@@ -109,8 +109,12 @@ public class MinerUser {
     }
 
     public static void Mine() throws IOException, NoSuchAlgorithmException, InvalidKeyException, InterruptedException, IllegalAccessException, NoSuchPaddingException, NoSuchProviderException, SignatureException, InvalidKeySpecException {
-        SocketAction.mineBlock(remoteHost, block, miner);
-        block=null;
+        try{
+            SocketAction.mineBlock(remoteHost, block, miner);
+            block=null;
+        }catch (Exception e){
+            System.out.println("目前並無緩衝區塊");
+        }
     }
     public static void Get_Blockchain() throws IOException, InterruptedException {
         SocketAction.getBlockchain(remoteHost);
