@@ -17,9 +17,10 @@ public class Transaction {
     public String messages;
 
     public String transaction_hash;
-    public String publickey;
+    public String ECDSA_Publickey;
+    public String RSA_Publickey;
     public String signature;
-    public Transaction(String sender, String receiver, double amount, double fee, String messages, String publickey, String signature ) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public Transaction(String sender, String receiver, double amount, double fee, String messages, String ECDS_Publickey, String signature, String RSA_Publickey ) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         this.sender = sender;
         this.receiver = receiver;
         this.amount = amount;
@@ -28,8 +29,10 @@ public class Transaction {
         // HASH = RIPEMD160( SHA256( transaction ) )
         this.transaction_hash = StringUtil.apply_RIPEMD160(StringUtil.applyHASH(this.sender+this.receiver+this.amount+this.fee+this.messages,"SHA-256"));
 
-        this.publickey = publickey;
+        this.ECDSA_Publickey = ECDS_Publickey;
         this.signature = signature;
+
+        this.RSA_Publickey = RSA_Publickey;
     }
 
 
@@ -42,7 +45,8 @@ public class Transaction {
         jsonObject.put("fee",this.fee);
         jsonObject.put("messages",this.messages);
         //jsonObject.put("publicKey", StringUtil.Generate_ECDSA_Public_Key(this.publickey));
-        jsonObject.put("publicKey",this.publickey);
+        jsonObject.put("ECDSA_PublicKey",this.ECDSA_Publickey);
+        jsonObject.put("RSA_PublicKey",this.RSA_Publickey);
         jsonObject.put("txnsign",this.signature);
         return jsonObject;
     }
@@ -58,7 +62,7 @@ public class Transaction {
     public static Boolean Is_transactions_valid(Transaction transaction) throws InvalidKeySpecException, SignatureException, NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException, IllegalAccessException, NoSuchProviderException {
         JSONObject  transactionJsonobject = transaction.Transaction_to_JSON();
 
-        String publicKeyString = transactionJsonobject.getString("publicKey");
+        String publicKeyString = transactionJsonobject.getString("ECDSA_PublicKey");
 
         boolean r = KeyGenerater.Verify_Signature(transactionJsonobject.getString("txnsign"),publicKeyString,transactionJsonobject.getString("messages"));
         return r;

@@ -89,6 +89,8 @@ public class MinerUser {
         do {
             System.out.print("[*] ");
             command = scanner.nextLine().strip();
+            if("".equals(command))
+                continue;
             actions.get(command).run();
         } while (true);
 

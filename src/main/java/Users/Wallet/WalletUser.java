@@ -5,6 +5,7 @@ import BlockChain.Transaction;
 
 import Users.SocketAction;
 import Users.UserFunctions;
+import Util.KeyGenerater;
 
 
 import javax.crypto.BadPaddingException;
@@ -60,7 +61,7 @@ public class WalletUser {
         actions.put("commit",()-> {
             try {
                 CommitTransaction();
-            } catch (InterruptedException | IllegalAccessException | IOException e) {
+            } catch (InterruptedException | IllegalAccessException | IOException | InvalidKeySpecException | NoSuchAlgorithmException | BadPaddingException | InvalidKeyException | NoSuchPaddingException | NoSuchProviderException | IllegalBlockSizeException e) {
                 e.printStackTrace();
             }
         });
@@ -83,6 +84,8 @@ public class WalletUser {
         do{
             System.out.print("[*]\t");
             command= scanner.nextLine().strip();
+            if("".equals(command))
+                continue;
             try{
                 actions.get(command).run();
             }catch (Exception e){
@@ -141,7 +144,7 @@ public class WalletUser {
         UserFunctions.List_Transaction(transactions);
     }
 
-    private static void CommitTransaction() throws InterruptedException, IllegalAccessException, IOException {
+    private static void CommitTransaction() throws InterruptedException, IllegalAccessException, IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
         if(user ==null){
             System.out.println("no wallet import");
             return;
@@ -160,7 +163,10 @@ public class WalletUser {
             transactions.remove(0);
         }
         else {
-            System.out.println("交易成功提交");
+            System.out.println("交易成功註冊並取得匿名身分");
+
+            System.out.println(KeyGenerater.RSA_Decrypt(response,KeyGenerater.Get_RSA_PrivateKey(user.getRSA_privateKey())));
+
             transactions.remove(0);
         }
     }

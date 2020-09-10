@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.awt.*;
 import java.io.IOException;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
@@ -63,15 +64,16 @@ public class RegistrationMethod {
         else if(nodeMethod.bufferChain.get(0).transactions.size() < Block.block_limitation){
 
             JSONObject userData = new JSONObject();
-            userData.put("User_PublicKey",t.publickey);
+            userData.put("User_ECDSA_PublicKey",t.ECDSA_Publickey);
             userData.put("User_Signature",t.signature);
+            userData.put("User_RSA_PublicKey",t.RSA_Publickey);
             userData.put("User_Transaction_Signature",t.messages);
 
             // encrypt user data
             String  encrypt_User_Data = KeyGenerater.RSA_Encrypt(userData.toString(), KeyGenerater.Get_RSA_PublicKey(nodeMethod.nodeUser.RSA_publicKey));
 
 
-            Transaction Anonymous = nodeMethod.nodeUser.Make_Transaction(nodeMethod.nodeUser.RSA_publicKey,t.sender,t.amount,t.fee,encrypt_User_Data);
+            Transaction Anonymous = nodeMethod.nodeUser.Make_Transaction(nodeMethod.nodeUser.ECDSA_publicKey,t.sender,t.amount,t.fee,encrypt_User_Data);
 
             // Add transaction to block
             nodeMethod.bufferChain.get(0).Add_Transaction(Anonymous);
@@ -80,10 +82,26 @@ public class RegistrationMethod {
         else{
             System.out.println("\t\t交易已滿 等待挖掘");
             result="exceed length";
+            SocketAction.SocketWrite(result, nodeMethod.clientSocket);
+            return ;
         }
 
-        // send result
+        // send result (Anonymous user identity)
+
+        KeyGenerater AnonymousKeyGenerator = new KeyGenerater();
+
+        StringBuilder AnonymousKeys = new StringBuilder();
+        AnonymousKeys.append(AnonymousKeyGenerator.Get_PublicKey_String());
+        AnonymousKeys.append(AnonymousKeyGenerator.Get_PrivateKey_String());
+        AnonymousKeys.append(AnonymousKeyGenerator.Get_RSA_PublicKey_String());
+        AnonymousKeys.append(AnonymousKeyGenerator.Get_RSA_PrivateKey_String());
+
+
+        result = KeyGenerater.RSA_Encrypt(AnonymousKeys.toString(),KeyGenerater.Get_RSA_PublicKey(t.RSA_Publickey));
+
+
         SocketAction.SocketWrite(result, nodeMethod.clientSocket);
+
     }
 
 

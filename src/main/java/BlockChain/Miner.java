@@ -46,13 +46,18 @@ public class Miner {
 
 
     }
-//-----------------------------------------------------------------------------------------------------------
+
+    public String getRSA_privateKey() {
+        return RSA_privateKey;
+    }
+
+    //-----------------------------------------------------------------------------------------------------------
     // transaction function
 //----------------------------------------------------------------------------------------------------------
     public Transaction Make_Transaction(String sender, String receiver, double amount, double fee, String messages) throws NoSuchPaddingException, NoSuchAlgorithmException, UnsupportedEncodingException, IllegalBlockSizeException, InvalidKeyException, SignatureException, BadPaddingException, IllegalAccessException, NoSuchProviderException, InvalidKeySpecException {
         String signature = KeyGenerater.Sign_Message(messages,this.ECDSA_privateKey);
 
-        Transaction t =  new Transaction(sender,receiver,amount,fee,messages,this.ECDSA_publicKey,signature);
+        Transaction t =  new Transaction(sender,receiver,amount,fee,messages,this.ECDSA_publicKey,signature,this.RSA_publicKey);
         return t;
     }
     public String Make_Block_Signature(String data) throws SignatureException, NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException, NoSuchProviderException, InvalidKeySpecException {

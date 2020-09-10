@@ -137,10 +137,12 @@ public class UserFunctions {
         String message = jtransaction.getString("messages");
         double amount = jtransaction.getDouble("amount");
         double fee = jtransaction.getDouble("fee");
-        String pulickey = jtransaction.getString("publicKey");
+        String ECDSA_pulickey = jtransaction.getString("ECDSA_PublicKey");
+        String RSA_publickey = jtransaction.getString("RSA_PublicKey");
         String txnsign = jtransaction.getString("txnsign");
 
-        return new Transaction(sender,receiver,amount,fee,message,pulickey,txnsign);
+
+        return new Transaction(sender,receiver,amount,fee,message,ECDSA_pulickey,txnsign,RSA_publickey);
     }
 
     public static void printOutBlockchain(String strBlockchain,int chainSize){
@@ -178,8 +180,9 @@ public class UserFunctions {
                 System.out.println("\t\t\t\tMessage: "+jsonSingleTransaction.getString("messages"));
                 System.out.println("\t\t\t\tAmount: "+jsonSingleTransaction.getDouble("amount"));
                 System.out.println("\t\t\t\tFee: "+jsonSingleTransaction.getDouble("fee"));
-                System.out.println("\t\t\t\tPublicKey: "+jsonSingleTransaction.getString("publicKey"));
+                System.out.println("\t\t\t\tECDSA_PublicKey: "+jsonSingleTransaction.getString("ECDSA_PublicKey"));
                 System.out.println("\t\t\t\ttxnSignature: "+jsonSingleTransaction.getString("txnsign"));
+                System.out.println("\t\t\t\tRSA_PublicKey: "+jsonSingleTransaction.getString("RSA_PublicKey"));
                 System.out.println("\t\t\t}");
             }catch (Exception e){
                 break;
