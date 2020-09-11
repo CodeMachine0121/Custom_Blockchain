@@ -223,6 +223,7 @@ public class WalletUser {
         user.balance = SocketAction.getBalance(remoteHost,user.address);
     }
 
+    // 驗證 匿名CA
     private static void Verify_CA() throws Exception{
 
         System.out.print("想審核CA之ID:\t");
@@ -239,6 +240,7 @@ public class WalletUser {
         //user.balance = SocketAction.getBalance(remoteHost,user.address);
         Thread.sleep(100);
 
+        // 把 CA 內容塞進 transaction Message裡面
         Transaction t = user.Make_Transaction(user.address,"CBC",0,0,CA.toString());
 
         // commit transaction

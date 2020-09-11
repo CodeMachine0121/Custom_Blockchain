@@ -251,12 +251,13 @@ public class SocketAction {
     }
 
     // Wallet -> CBC
-    public static Boolean Verify_CA(String remotehost ,Transaction T) throws IOException, IllegalAccessException {
+    public static Boolean Verify_CA(String remotehost ,Transaction T) throws IOException, IllegalAccessException, InterruptedException {
         String command = "verifyCA";
         Socket socket = new Socket(remotehost,SERVER_PORT);
 
         // send command
         SocketWrite(command,socket);
+        Thread.sleep(100);
 
         // send transaction
         SocketWrite(T.Transaction_to_JSON().toString(),socket);
