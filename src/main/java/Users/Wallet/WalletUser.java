@@ -74,7 +74,7 @@ public class WalletUser {
                 e.printStackTrace();
             }
         });
-        actions.put("verify",()->{
+        actions.put("verifyCA",()->{
             try {
                 Verify_CA();
             } catch (Exception e) {

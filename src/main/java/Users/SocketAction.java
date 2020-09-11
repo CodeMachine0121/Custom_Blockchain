@@ -238,7 +238,8 @@ public class SocketAction {
         Socket socket = new Socket(remoteHost,SERVER_PORT);
         Thread.sleep(TIME_DELAY);
 
-        SocketWrite("Search",socket);
+        // send command
+        SocketWrite("verifyCA",socket);
 
         // send CA
         SocketWrite(CA.toString(),socket);

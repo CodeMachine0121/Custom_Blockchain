@@ -9,6 +9,7 @@ import Users.SocketAction;
 import Users.UserFunctions;
 import org.json.JSONObject;
 
+import java.net.SocketException;
 import java.util.Scanner;
 
 import static Users.SocketAction.SocketRead;
@@ -70,8 +71,11 @@ public class CertificateMethod {
         }
 
         JSONObject CA = new JSONObject(t.messages);
-        result = SocketAction.Request_Search_AnonymousID(RBCNode,CA);
-
+        try {
+            result = SocketAction.Request_Search_AnonymousID(RBCNode, CA);
+        }catch (SocketException e){
+            System.out.println("分支連線至RBC");
+        }
         System.out.println("審核結果:\t"+result);
 
 
