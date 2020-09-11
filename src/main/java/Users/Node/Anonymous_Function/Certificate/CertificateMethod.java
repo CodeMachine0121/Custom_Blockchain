@@ -52,6 +52,7 @@ public class CertificateMethod {
         // get transaction String
         String Stransaction = SocketRead(nodeMethod.clientSocket);
         Transaction t = UserFunctions.Convert2Transaction(Stransaction);
+        System.out.println("MESSAGE:\t"+t.messages);
 
         String result="";
         // Verify the amount of transaction in one block
