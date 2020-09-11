@@ -126,9 +126,9 @@ public class RegistrationMethod {
         JSONObject CA = new JSONObject(SocketRead(nodeMethod.clientSocket));
         String ID = CA.getString("ID");
         String server_ECDSA_PublicKey = CA.getString("ECDSA_PublicKey");
-        String server_Signature = CA.getString("Signature");
+
         String server_RSA_PublicKey = CA.getString("RSA_PublicKey");
-        String server_message = CA.getString("Message");
+
 
 
         boolean flag =false;
