@@ -252,7 +252,7 @@ public class SocketAction {
 
     // Wallet -> CBC
     public static Boolean Verify_CA(String remotehost ,Transaction T) throws IOException, IllegalAccessException {
-        String command = "verify";
+        String command = "verifyCA";
         Socket socket = new Socket(remotehost,SERVER_PORT);
 
         // send command

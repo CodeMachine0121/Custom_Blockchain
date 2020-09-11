@@ -41,7 +41,7 @@ public class RegistrationMethod {
             }
         });
 
-        nodeMethod.actions.put("Verify",()->{
+        nodeMethod.actions.put("verify",()->{
             try {
                 Verify_Anonymous_CA();
             } catch (Exception e) {
