@@ -56,7 +56,7 @@ public class UserFunctions {
 
         // input information of transaction
         String sender = user.address;
-        System.out.print("\tReceiver:\t");
+        System.out.print("\tID:\t");
         String receiver = scanner.next().strip();
         System.out.print("\tMessage:\t");
         String messages = scanner.next().strip();
@@ -171,28 +171,35 @@ public class UserFunctions {
         System.out.println("\t\tTransactions:{");
         JSONObject jsonTransactions = jsonBlock.getJSONObject("Transactions");
         JSONObject jsonSingleTransaction;
-        for(int i=0;i<Block.block_limitation;i++){
-            try{
-                jsonSingleTransaction = jsonTransactions.getJSONObject("txn-"+i);
-                System.out.println("\t\t\ttxn-"+i+": {");
-                System.out.println("\t\t\t\tSender: "+jsonSingleTransaction.getString("sender"));
-                System.out.println("\t\t\t\tReceiver: "+jsonSingleTransaction.getString("receiver"));
-                System.out.println("\t\t\t\tMessage: "+jsonSingleTransaction.getString("messages"));
-                System.out.println("\t\t\t\tAmount: "+jsonSingleTransaction.getDouble("amount"));
-                System.out.println("\t\t\t\tFee: "+jsonSingleTransaction.getDouble("fee"));
-                System.out.println("\t\t\t\tECDSA_PublicKey: "+jsonSingleTransaction.getString("ECDSA_PublicKey"));
-                System.out.println("\t\t\t\ttxnSignature: "+jsonSingleTransaction.getString("txnsign"));
-                System.out.println("\t\t\t\tRSA_PublicKey: "+jsonSingleTransaction.getString("RSA_PublicKey"));
+        for(int i=0;i<Block.block_limitation;i++) {
+            try {
+                jsonSingleTransaction = jsonTransactions.getJSONObject("txn-" + i);
+                System.out.println("\t\t\ttxn-" + i + ": {");
+                System.out.println("\t\t\t\tSender: " + jsonSingleTransaction.getString("sender"));
+                System.out.println("\t\t\t\tReceiver: " + jsonSingleTransaction.getString("receiver"));
+                System.out.println("\t\t\t\tMessage: " + jsonSingleTransaction.getString("messages"));
+                System.out.println("\t\t\t\tAmount: " + jsonSingleTransaction.getDouble("amount"));
+                System.out.println("\t\t\t\tFee: " + jsonSingleTransaction.getDouble("fee"));
+                System.out.println("\t\t\t\tECDSA_PublicKey: " + jsonSingleTransaction.getString("ECDSA_PublicKey"));
+                System.out.println("\t\t\t\ttxnSignature: " + jsonSingleTransaction.getString("txnsign"));
+                System.out.println("\t\t\t\tRSA_PublicKey: " + jsonSingleTransaction.getString("RSA_PublicKey"));
                 System.out.println("\t\t\t}");
-            }catch (Exception e){
+            } catch (Exception e) {
                 break;
             }
         }
-
         System.out.println("\t\t}");
         System.out.println("\t}");
     }
-
+    public static void printOutAnonymousID(String strID){
+        JSONObject ID = new JSONObject(strID);
+        System.out.println("\tAnonymous ID:{");
+        System.out.println("\t\tECDSA_PublicKey: "+ID.getString("ECDSA_PublicKey"));
+        System.out.println("\t\tECDSA_PrivateKey: "+ID.getString("ECDSA_PrivateKey"));
+        System.out.println("\t\tRSA_PublicKey: "+ID.getString("RSA_PublicKey"));
+        System.out.println("\t\tRSA_PrivateKey: "+ID.getString("RSA_PrivateKey"));
+        System.out.println("\t}");
+    }
 
     // For Node used
     public static Double setTotalBalance(){
@@ -202,5 +209,7 @@ public class UserFunctions {
             return -1.0;
         }
     }
+
+
 
 }

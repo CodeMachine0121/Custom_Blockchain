@@ -231,6 +231,24 @@ public class SocketAction {
     }
 
 
+    // for CBC use
+    public static String Request_Search_AnonymousID(String remoteHost,JSONObject CA) throws Exception{
 
+
+
+        Socket socket = new Socket(remoteHost,SERVER_PORT);
+        Thread.sleep(TIME_DELAY);
+
+        SocketWrite("Search",socket);
+
+        // send CA
+        SocketWrite(CA.toString(),socket);
+
+        String result = SocketRead(socket);
+
+        socket.close();
+
+        return result;
+    }
 
 }
