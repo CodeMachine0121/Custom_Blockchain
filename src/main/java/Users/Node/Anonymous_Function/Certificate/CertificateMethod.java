@@ -30,7 +30,7 @@ public class CertificateMethod {
         nodeMethod = new NodeMethod();
         nodeMethod.Setup_ServerNode();
 
-        nodeMethod.actions.put("commit",()->{
+        nodeMethod.actions.put("verifyCA",()->{
             try {
                 VerificationCertificate();
             } catch (Exception e) {

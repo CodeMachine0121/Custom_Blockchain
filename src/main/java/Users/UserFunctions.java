@@ -4,11 +4,14 @@ import BlockChain.Block;
 import BlockChain.Miner;
 import BlockChain.Transaction;
 
+import Util.KeyGenerater;
 import org.json.JSONObject;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -211,5 +214,58 @@ public class UserFunctions {
     }
 
 
+    public static void saveCertificate(JSONObject CA) throws IOException {
 
+        String ID = CA.getString("ID");
+
+        String path = "./Certificate";
+        File file = new File(path);
+
+        if(!file.exists())
+            file.mkdir();
+        file = new File(path+"/"+ID);
+
+        if(file.createNewFile()){
+            System.out.println("Create file....");
+            FileWriter writer = new FileWriter(path+"/"+ID);
+
+            writer.write(CA.toString());
+
+            writer.close();
+        }else{
+
+            if(file.delete()){
+                System.out.println("Update file....");
+                FileWriter writer = new FileWriter(path+"/"+ID);
+
+                writer.write(CA.toString());
+
+                writer.close();
+
+            }else{
+                System.out.println("Can't update file");
+            }
+
+        }
+
+    }
+
+    public static JSONObject loadCertitfiacate(String ID)throws Exception{
+
+        String path = "./Certificate/"+ID;
+
+        File file = new File(path);
+        String data="";
+        try{
+            Scanner scanner = new Scanner(file);
+            data = scanner.nextLine();
+        }catch (Exception e){
+            System.out.println("No file found");
+            return null;
+        }
+
+        JSONObject CA = new JSONObject(data);
+
+        return CA;
+    }
 }

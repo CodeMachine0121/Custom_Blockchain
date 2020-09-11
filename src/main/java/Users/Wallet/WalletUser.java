@@ -6,6 +6,7 @@ import BlockChain.Transaction;
 import Users.SocketAction;
 import Users.UserFunctions;
 import Util.KeyGenerater;
+import org.json.JSONObject;
 
 
 import javax.crypto.BadPaddingException;
@@ -26,6 +27,7 @@ public class WalletUser {
     static List<Transaction> transactions;
     static String remoteHost;
     static Map<String, Runnable> actions;
+
 
     public WalletUser()  {
 
@@ -61,7 +63,21 @@ public class WalletUser {
         actions.put("commit",()-> {
             try {
                 CommitTransaction();
-            } catch (InterruptedException | IllegalAccessException | IOException | InvalidKeySpecException | NoSuchAlgorithmException | BadPaddingException | InvalidKeyException | NoSuchPaddingException | NoSuchProviderException | IllegalBlockSizeException e) {
+            } catch (InterruptedException | IllegalAccessException | IOException e) {
+                e.printStackTrace();
+            }
+        });
+        actions.put("AnonymousCA",()->{
+            try {
+                Get_AnonymousCA();
+            } catch (InterruptedException | IllegalAccessException | IOException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchPaddingException e) {
+                e.printStackTrace();
+            }
+        });
+        actions.put("verify",()->{
+            try {
+                Verify_CA();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -144,7 +160,32 @@ public class WalletUser {
         UserFunctions.List_Transaction(transactions);
     }
 
-    private static void CommitTransaction() throws InterruptedException, IllegalAccessException, IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+    private static void CommitTransaction() throws InterruptedException, IllegalAccessException, IOException {
+        if(user ==null){
+            System.out.println("no wallet import");
+            return;
+        }
+        //user.balance = SocketAction.getBalance(remoteHost,user.address);
+        Thread.sleep(100);
+
+
+        // commit transaction
+        String response = SocketAction.commitTransaction(remoteHost,transactions.get(0));
+
+        if("exceed length".equals(response)){
+            System.out.println("該區塊交易已滿");
+        }else if("signature wrong".equals(response)){
+            System.out.println("交易簽章錯誤");
+            transactions.remove(0);
+        }
+        else {
+            System.out.println("交易成功提交");
+            transactions.remove(0);
+        }
+    }
+
+    // 取得 匿名CA
+    private static void Get_AnonymousCA() throws InterruptedException, IllegalAccessException, IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
         if(user ==null){
             System.out.println("no wallet import");
             return;
@@ -165,7 +206,11 @@ public class WalletUser {
         else {
             System.out.println("交易成功註冊並取得匿名身分");
 
-            UserFunctions.printOutAnonymousID(KeyGenerater.RSA_Decrypt(response,KeyGenerater.Get_RSA_PrivateKey(user.getRSA_privateKey())));
+            JSONObject CA = new JSONObject(KeyGenerater.RSA_Decrypt(response,KeyGenerater.Get_RSA_PrivateKey(user.getRSA_privateKey())));
+            UserFunctions.printOutAnonymousID(CA.toString());
+            // 儲存 CA
+            UserFunctions.saveCertificate(CA);
+
             transactions.remove(0);
         }
     }
@@ -178,5 +223,31 @@ public class WalletUser {
         user.balance = SocketAction.getBalance(remoteHost,user.address);
     }
 
+    private static void Verify_CA() throws Exception{
+
+        System.out.print("想審核CA之ID:\t");
+        String ID = scanner.nextLine().strip();
+        JSONObject CA = UserFunctions.loadCertitfiacate(ID);
+        if(CA == null){
+            System.out.println("no CA import");
+            return;
+        }
+        if(user ==null){
+            System.out.println("no wallet import");
+            return;
+        }
+        //user.balance = SocketAction.getBalance(remoteHost,user.address);
+        Thread.sleep(100);
+
+        Transaction t = user.Make_Transaction(user.address,"CBC",0,0,CA.toString());
+
+        // commit transaction
+        Boolean response = SocketAction.Verify_CA(remoteHost,t);
+
+        if(response)
+            System.out.println("審核結果: 通過");
+
+
+    }
 
 }
