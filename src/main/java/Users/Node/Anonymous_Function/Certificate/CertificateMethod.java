@@ -57,7 +57,7 @@ public class CertificateMethod {
         // Verify the amount of transaction in one block
         if(nodeMethod.bufferChain.get(0).transactions.size()>= Block.block_limitation){
             System.out.println("\t\t交易已滿 等待挖掘");
-            result="exceed length";
+            result="no";
             SocketAction.SocketWrite(result, nodeMethod.clientSocket);
             return;
         }
@@ -65,14 +65,14 @@ public class CertificateMethod {
         // Verify the signature of transaction
         if(!Transaction.Is_transactions_valid(t)){
             System.out.println("\t\t交易簽章錯誤");
-            result = "signature wrong";
+            result = "no";
             SocketAction.SocketWrite(result, nodeMethod.clientSocket);
             return ;
         }
 
-        JSONObject CA = new JSONObject(t.messages);
+       // JSONObject CA = new JSONObject(t.messages);
         try {
-            result = SocketAction.Request_Search_AnonymousID(RBCNode, CA);
+            result = SocketAction.Request_Search_AnonymousID(RBCNode,t.messages);
         }catch (SocketException e){
             System.out.println("分支連線至RBC");
         }

@@ -233,7 +233,7 @@ public class SocketAction {
 
     // CBC -> RBC
     // 驗證CA
-    public static String Request_Search_AnonymousID(String remoteHost,JSONObject CA) throws Exception{
+    public static String Request_Search_AnonymousID(String remoteHost,String CA) throws Exception{
 
         Socket socket = new Socket(remoteHost,SERVER_PORT);
         Thread.sleep(TIME_DELAY);
@@ -242,7 +242,7 @@ public class SocketAction {
         SocketWrite("verifyCA",socket);
 
         // send CA
-        SocketWrite(CA.toString(),socket);
+        SocketWrite(CA,socket);
 
         String result = SocketRead(socket);
 
