@@ -21,11 +21,14 @@ public class test {
 
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalAccessException, InvalidKeyException, BadPaddingException, SignatureException, IllegalBlockSizeException, InvalidKeySpecException, NoSuchProviderException {
 
-       KeyGenerater keyGenerater = new KeyGenerater();
+        for(int i=1;i<10;i++){
+            for(int k=1;k<10;k++){
+                if(k==5)
+                    break;
+                System.out.println(k);
+            }
+        }
 
-       String hello="hello";
-       String a = KeyGenerater.RSA_Encrypt(hello,(PublicKey)keyGenerater.Get_RSA_PrivateKey());
-        System.out.println(a);
     }
 
 

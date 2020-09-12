@@ -151,7 +151,8 @@ public class RegistrationMethod {
 
                 if(ID.equals(AnonymousData.getString("ID"))){
                     flag = KeyGenerater.Verify_Signature(AnonymousData.getString("Data"), server_ECDSA_PublicKey,server_RSA_PublicKey);
-                    break;
+                    if(flag)
+                        break;
                 }
             }
             if(flag)
