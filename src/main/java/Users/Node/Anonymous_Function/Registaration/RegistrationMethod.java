@@ -136,11 +136,14 @@ public class RegistrationMethod {
         for(Block block:nodeMethod.blockchain.blockchain){
             for(Transaction t:block.transactions){
                 System.out.println(t.messages);
-                JSONObject AnonymousData = new JSONObject(t.messages);
+               /*
+               JSONObject AnonymousData = new JSONObject(t.messages);
                 if(ID.equals(AnonymousData.getString("ID"))){
                     flag = KeyGenerater.Verify_Signature(AnonymousData.getString("Data"), server_ECDSA_PublicKey,server_RSA_PublicKey);
                     break;
                 }
+
+                */
             }
             if(flag)
                 break;
