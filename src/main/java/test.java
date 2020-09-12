@@ -21,14 +21,9 @@ public class test {
 
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalAccessException, InvalidKeyException, BadPaddingException, SignatureException, IllegalBlockSizeException, InvalidKeySpecException, NoSuchProviderException {
 
-        for(int i=1;i<10;i++){
-            for(int k=1;k<10;k++){
-                if(k==5)
-                    break;
-                System.out.println(k);
-            }
-        }
+       PublicKey ecdsa = KeyGenerater.Get_PublicKey("MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEmO2cN+v/5gLCkwYwaukeVkLA5DSLd5CDrF9do42KThS4qzFB8cR/zID/xytKqGkTZM0bhAQBzcKz+tfwbddQOw==");
 
+       String message = "";
     }
 
 

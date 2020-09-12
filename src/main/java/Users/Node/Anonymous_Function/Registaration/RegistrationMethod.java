@@ -105,7 +105,7 @@ public class RegistrationMethod {
         userData.put("User_Transaction_Signature",t.messages);
 
         // encrypt user data
-        String signature  = KeyGenerater.Sign_Message(t.RSA_Publickey,AnonymousKeyGenerator.Get_PrivateKey_String());
+        String signature  = KeyGenerater.Sign_Message(t.RSA_Publickey,AnonymousKeyGenerator.Get_RSA_PublicKey_String());
 
         // 用JSON搭配ID值封裝起來
         JSONObject UserID = new JSONObject();
