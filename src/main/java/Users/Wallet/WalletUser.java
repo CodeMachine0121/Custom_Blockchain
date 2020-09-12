@@ -265,9 +265,9 @@ public class WalletUser {
         SocketWrite(command,socket);
         Thread.sleep(100);
 
-        String CA = T.messages;
+        String Transaction_with_CA = T.Transaction_to_JSON().toString();
         // send transaction
-        SocketWrite(CA,socket);
+        SocketWrite(Transaction_with_CA,socket);
 
         String result = SocketRead(socket);
         System.out.println(result);
