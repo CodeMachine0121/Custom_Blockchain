@@ -106,8 +106,12 @@ public class RegistrationMethod {
         userData.put("User_Transaction_Signature",t.messages);
 
         // 用匿名私鑰 對 UserData 做簽章 存在RBC裡面
-        System.out.println("設定簽章:\t"+t.RSA_Publickey);
         String signature  = KeyGenerater.Sign_Message(userData.toString(),AnonymousKeyGenerator.Get_PrivateKey_String());
+
+        System.out.println("設定簽章: 使用 "+AnonymousKeyGenerator.Get_PrivateKey_String());
+        System.out.println("原文: "+userData.toString());
+        System.out.println("簽章: "+signature);
+
 
         // 用JSON搭配ID值封裝起來
         JSONObject UserID = new JSONObject();
