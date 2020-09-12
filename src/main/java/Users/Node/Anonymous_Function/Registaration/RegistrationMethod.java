@@ -94,6 +94,7 @@ public class RegistrationMethod {
         AnonymousID.put("RSA_PublicKey",AnonymousKeyGenerator.Get_RSA_PublicKey_String());
         AnonymousID.put("RSA_PrivateKey",AnonymousKeyGenerator.Get_RSA_PrivateKey_String());
 
+        // 把 Anonymous CA 加密傳過去給使用者
         result = KeyGenerater.RSA_Encrypt(AnonymousID.toString(),KeyGenerater.Get_RSA_PublicKey(t.RSA_Publickey));
 
 
@@ -104,9 +105,9 @@ public class RegistrationMethod {
         userData.put("User_RSA_PublicKey",t.RSA_Publickey);
         userData.put("User_Transaction_Signature",t.messages);
 
-        // encrypt user data
+        // 用匿名私鑰 對 UserData 做簽章 存在RBC裡面
         System.out.println("設定簽章:\t"+t.RSA_Publickey);
-        String signature  = KeyGenerater.Sign_Message(t.RSA_Publickey,AnonymousKeyGenerator.Get_PrivateKey_String());
+        String signature  = KeyGenerater.Sign_Message(userData.toString(),AnonymousKeyGenerator.Get_PrivateKey_String());
 
         // 用JSON搭配ID值封裝起來
         JSONObject UserID = new JSONObject();
@@ -147,7 +148,9 @@ public class RegistrationMethod {
                 }
 
                 if(ID.equals(AnonymousData.getString("ID"))){
-                    flag = KeyGenerater.Verify_Signature(AnonymousData.getString("Data"), CA.getString("ECDSA_PublicKey"),CA.getString("RSA_PublicKey") );
+
+                    flag = KeyGenerater.Verify_Signature(AnonymousData.getString("Data"), CA.getString("ECDSA_PublicKey") ,CA.toString() );
+                    System.out.println("enter");
                     if(flag)
                         break;
                 }
