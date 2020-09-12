@@ -105,7 +105,7 @@ public class RegistrationMethod {
         userData.put("User_Transaction_Signature",t.messages);
 
         // encrypt user data
-        String signature  = KeyGenerater.Sign_Message(t.RSA_Publickey,AnonymousKeyGenerator.Get_RSA_PublicKey_String());
+        String signature  = KeyGenerater.Sign_Message(t.RSA_Publickey,AnonymousKeyGenerator.Get_PrivateKey_String());
 
         // 用JSON搭配ID值封裝起來
         JSONObject UserID = new JSONObject();
@@ -125,10 +125,6 @@ public class RegistrationMethod {
 
         JSONObject CA = new JSONObject(SocketRead(nodeMethod.clientSocket));
         String ID = CA.getString("ID");
-        String server_ECDSA_PublicKey = CA.getString("ECDSA_PublicKey");
-
-        String server_RSA_PublicKey = CA.getString("RSA_PublicKey");
-
 
 
         boolean flag =false;
@@ -150,7 +146,7 @@ public class RegistrationMethod {
                 }
 
                 if(ID.equals(AnonymousData.getString("ID"))){
-                    flag = KeyGenerater.Verify_Signature(AnonymousData.getString("Data"), server_ECDSA_PublicKey,server_RSA_PublicKey);
+                    flag = KeyGenerater.Verify_Signature(AnonymousData.getString("Data"), CA.getString("ECDSA_PublicKey"),CA.getString("RSA_PublicKey") );
                     if(flag)
                         break;
                 }
