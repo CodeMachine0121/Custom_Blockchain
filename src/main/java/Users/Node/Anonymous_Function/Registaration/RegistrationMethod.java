@@ -155,9 +155,13 @@ public class RegistrationMethod {
                 }
 
                 if(ID.equals(AnonymousData.getString("ID"))){
+                    String signature = AnonymousData.getString("Data");
+                    String publickey = CA.getString("ECDSA_PublicKey");
+                    String message = CA.toString();
+                    flag = KeyGenerater.Verify_Signature(signature,publickey,message);
 
-                    flag = KeyGenerater.Verify_Signature(AnonymousData.getString("Data"), CA.getString("ECDSA_PublicKey") ,CA.toString() );
-                    System.out.println("enter");
+                    System.out.println("Signature: "+signature);
+
                     if(flag)
                         break;
                 }
