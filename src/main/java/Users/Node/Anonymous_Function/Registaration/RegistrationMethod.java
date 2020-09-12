@@ -135,13 +135,20 @@ public class RegistrationMethod {
         if(nodeMethod.blockchain.blockchain.size() == 1){
             System.out.println("CA 資料庫尚未建起");
             SocketWrite("Fail",nodeMethod.clientSocket);
+            return;
         }
 
         // run throw All transaction in blockchain
         for(Block block:nodeMethod.blockchain.blockchain){
             for(Transaction t:block.transactions){
                 //System.out.println(t.messages);
-               JSONObject AnonymousData = new JSONObject(t.messages);
+                JSONObject AnonymousData;
+                try{
+                    AnonymousData = new JSONObject(t.messages);
+                }catch (Exception e){
+                    continue;
+                }
+
                 if(ID.equals(AnonymousData.getString("ID"))){
                     flag = KeyGenerater.Verify_Signature(AnonymousData.getString("Data"), server_ECDSA_PublicKey,server_RSA_PublicKey);
                     break;
