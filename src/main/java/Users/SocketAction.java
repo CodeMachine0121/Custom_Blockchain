@@ -275,6 +275,6 @@ public class SocketAction {
             return false;
         }
 
-        return !"no".equals(result);
+        return !"Fail".equals(result);
     } 
 }
