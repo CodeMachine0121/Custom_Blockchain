@@ -131,9 +131,10 @@ public class RegistrationMethod {
 
         String strCA = SocketRead(nodeMethod.clientSocket);
         JSONObject CA = new JSONObject(strCA);
-
+        System.out.println(strCA);
         String ID = CA.getString("ID");
-        String Data = CA.getString("Data");
+
+
 
         boolean flag =false;
         if(nodeMethod.blockchain.blockchain.size() == 1){
