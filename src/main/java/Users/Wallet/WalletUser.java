@@ -14,9 +14,12 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.util.*;
+
+import static Users.SocketAction.*;
 
 public class WalletUser {
 
@@ -244,12 +247,40 @@ public class WalletUser {
         Transaction t = user.Make_Transaction(user.address,"CBC",0,0,CA.toString());
 
         // commit transaction
-        Boolean response = SocketAction.Verify_CA(remoteHost,t);
+        Boolean response = Verify_CA(remoteHost,t);
 
         if(response)
             System.out.println("審核結果: 通過");
 
 
+    }
+
+
+    // Wallet -> CBC
+    public static Boolean Verify_CA(String remotehost ,Transaction T) throws IOException, IllegalAccessException, InterruptedException {
+        String command = "verifyCA";
+        Socket socket = new Socket(remotehost,SERVER_PORT);
+
+        // send command
+        SocketWrite(command,socket);
+        Thread.sleep(100);
+
+        // send transaction
+        SocketWrite(T.Transaction_to_JSON().toString(),socket);
+
+        String result = SocketRead(socket);
+        System.out.println(result);
+
+        if("exceed length".equals(result)){
+            System.out.println("該區塊交易已滿");
+            return false;
+        }
+        if("signature wrong".equals(result)){
+            System.out.println("交易簽章錯誤");
+            return false;
+        }
+
+        return !"Fail".equals(result);
     }
 
 }

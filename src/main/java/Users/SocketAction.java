@@ -231,50 +231,5 @@ public class SocketAction {
     }
 
 
-    // CBC -> RBC
-    // 驗證CA
-    public static String Request_Search_AnonymousID(String remoteHost,String CA) throws Exception{
 
-        Socket socket = new Socket(remoteHost,SERVER_PORT);
-        Thread.sleep(TIME_DELAY);
-
-        // send command
-        SocketWrite("verifyCA",socket);
-        Thread.sleep(TIME_DELAY);
-        // send CA
-        SocketWrite(CA,socket);
-        Thread.sleep(TIME_DELAY);
-        String result = SocketRead(socket);
-
-        socket.close();
-
-        return result;
-    }
-
-    // Wallet -> CBC
-    public static Boolean Verify_CA(String remotehost ,Transaction T) throws IOException, IllegalAccessException, InterruptedException {
-        String command = "verifyCA";
-        Socket socket = new Socket(remotehost,SERVER_PORT);
-
-        // send command
-        SocketWrite(command,socket);
-        Thread.sleep(100);
-
-        // send transaction
-        SocketWrite(T.Transaction_to_JSON().toString(),socket);
-
-        String result = SocketRead(socket);
-        System.out.println(result);
-
-        if("exceed length".equals(result)){
-            System.out.println("該區塊交易已滿");
-            return false;
-        }
-        if("signature wrong".equals(result)){
-            System.out.println("交易簽章錯誤");
-            return false;
-        }
-
-        return !"Fail".equals(result);
-    } 
 }

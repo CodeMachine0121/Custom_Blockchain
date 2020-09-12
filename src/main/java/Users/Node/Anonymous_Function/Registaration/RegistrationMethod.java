@@ -35,7 +35,7 @@ public class RegistrationMethod {
 
         nodeMethod.actions.put("commit",()->{
             try {
-                this.Commit_Transaction();
+                RegisterAnonymousCA();
             } catch (IOException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException | IllegalAccessException | InvalidKeyException | SignatureException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
                 e.printStackTrace();
             }
@@ -53,7 +53,7 @@ public class RegistrationMethod {
     public void TurnOn_Node_Server() throws IOException, NoSuchAlgorithmException, InvalidKeyException, SignatureException, IllegalAccessException, NoSuchPaddingException, BadPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, InterruptedException {
         nodeMethod.TurnOn_Node_Server();
     }
-    public void Commit_Transaction() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, IllegalAccessException, InvalidKeyException, SignatureException, NoSuchPaddingException, BadPaddingException, IllegalBlockSizeException {
+    public void RegisterAnonymousCA() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, IllegalAccessException, InvalidKeyException, SignatureException, NoSuchPaddingException, BadPaddingException, IllegalBlockSizeException {
         if(nodeMethod.nodeUser==null)
             System.exit(-15);
 
@@ -129,9 +129,11 @@ public class RegistrationMethod {
 
     public void Verify_Anonymous_CA()throws Exception{
 
-        JSONObject CA = new JSONObject(SocketRead(nodeMethod.clientSocket));
-        String ID = CA.getString("ID");
+        String strCA = SocketRead(nodeMethod.clientSocket);
+        JSONObject CA = new JSONObject(strCA);
 
+        String ID = CA.getString("ID");
+        String Data = CA.getString("Data");
 
         boolean flag =false;
         if(nodeMethod.blockchain.blockchain.size() == 1){
@@ -168,6 +170,8 @@ public class RegistrationMethod {
         }else{
             SocketWrite("Fail",nodeMethod.clientSocket);
         }
+
+        nodeMethod.clientSocket.close();
 
     }
 
