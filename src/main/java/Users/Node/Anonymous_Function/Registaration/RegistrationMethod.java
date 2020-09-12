@@ -132,6 +132,11 @@ public class RegistrationMethod {
 
 
         boolean flag =false;
+        if(nodeMethod.blockchain.blockchain.size() == 1){
+            System.out.println("CA 資料庫尚未建起");
+            SocketWrite("Fail",nodeMethod.clientSocket);
+        }
+
         // run throw All transaction in blockchain
         for(Block block:nodeMethod.blockchain.blockchain){
             for(Transaction t:block.transactions){
