@@ -240,10 +240,10 @@ public class SocketAction {
 
         // send command
         SocketWrite("verifyCA",socket);
-
+        Thread.sleep(TIME_DELAY);
         // send CA
         SocketWrite(CA,socket);
-
+        Thread.sleep(TIME_DELAY);
         String result = SocketRead(socket);
 
         socket.close();
