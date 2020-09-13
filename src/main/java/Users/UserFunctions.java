@@ -214,9 +214,50 @@ public class UserFunctions {
     }
 
 
-    public static void saveCertificate(JSONObject CA) throws IOException {
+    public static void saveAnonymous(JSONObject CA) throws IOException {
 
         String ID = CA.getString("ID");
+
+        String path = "./Anonymous";
+        File file = new File(path);
+
+        if(!file.exists())
+            file.mkdir();
+        file = new File(path+"/"+ID);
+
+        if(file.createNewFile()){
+            System.out.println("Create file....");
+            FileWriter writer = new FileWriter(path+"/"+ID);
+
+            writer.write(CA.getString("ECDSA_privateKey")+"\n");
+            writer.write(CA.getString("ECDSA_PublicKey")+"\n");
+            writer.write(CA.getString("RSA_PrivateKey")+"\n");
+            writer.write(CA.getString("RSA_PublicKey")+"\n");
+
+            writer.close();
+        }else{
+
+            if(file.delete()){
+                System.out.println("Update file....");
+                FileWriter writer = new FileWriter(path+"/"+ID);
+
+                writer.write(CA.toString());
+
+                writer.close();
+
+            }else{
+                System.out.println("Can't update file");
+            }
+
+        }
+
+    }
+
+    public static void saveCertificate(JSONObject CA)throws IOException{
+        String ID = CA.getString("ID");
+
+        CA.remove("RSA_PrivateKey");
+        CA.remove("ECDSA_PublicKey");
 
         String path = "./Certificate";
         File file = new File(path);
@@ -247,9 +288,7 @@ public class UserFunctions {
             }
 
         }
-
     }
-
     public static JSONObject loadCertitfiacate(String ID)throws Exception{
 
         String path = "./Certificate/"+ID;

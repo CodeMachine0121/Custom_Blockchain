@@ -200,6 +200,7 @@ public class WalletUser {
         // commit transaction
         String response = SocketAction.commitTransaction(remoteHost,transactions.get(0));
 
+
         if("exceed length".equals(response)){
             System.out.println("該區塊交易已滿");
         }else if("signature wrong".equals(response)){
@@ -210,6 +211,7 @@ public class WalletUser {
             System.out.println("交易成功註冊並取得匿名身分");
 
             JSONObject CA = new JSONObject(KeyGenerater.RSA_Decrypt(response,KeyGenerater.Get_RSA_PrivateKey(user.getRSA_privateKey())));
+
             UserFunctions.printOutAnonymousID(CA.toString());
             // 儲存 CA
             UserFunctions.saveCertificate(CA);
