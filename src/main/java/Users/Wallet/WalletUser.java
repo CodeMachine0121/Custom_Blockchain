@@ -211,9 +211,11 @@ public class WalletUser {
             System.out.println("交易成功註冊並取得匿名身分");
 
             JSONObject CA = new JSONObject(KeyGenerater.RSA_Decrypt(response,KeyGenerater.Get_RSA_PrivateKey(user.getRSA_privateKey())));
+            // 儲存匿名使用者金鑰
+            UserFunctions.saveAnonymous(CA);
 
             UserFunctions.printOutAnonymousID(CA.toString());
-            // 儲存 CA
+            // 儲存 匿名使用者之憑證
             UserFunctions.saveCertificate(CA);
 
             transactions.remove(0);
