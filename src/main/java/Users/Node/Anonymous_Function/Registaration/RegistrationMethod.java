@@ -116,7 +116,8 @@ public class RegistrationMethod {
         // 用JSON搭配ID值封裝起來
         JSONObject UserID = new JSONObject();
         UserID.put("ID",t.receiver);
-        UserID.put("Data",signature);
+        UserID.put("Signature",signature);
+        UserID.put("UserID",userData.toString());
 
         Transaction Anonymous = nodeMethod.nodeUser.Make_Transaction(nodeMethod.nodeUser.ECDSA_publicKey,t.sender,t.amount,t.fee,UserID.toString());
 
@@ -129,6 +130,7 @@ public class RegistrationMethod {
 
     public void Verify_Anonymous_CA()throws Exception{
 
+        // 此為匿名CA
         String strCA = SocketRead(nodeMethod.clientSocket);
         JSONObject CA = new JSONObject(strCA);
         System.out.println(strCA);
@@ -155,9 +157,10 @@ public class RegistrationMethod {
                 }
 
                 if(ID.equals(AnonymousData.getString("ID"))){
-                    String signature = AnonymousData.getString("Data");
+                    String signature = AnonymousData.getString("Signature");
+                    String message = AnonymousData.getString("UserID");
                     String publickey = CA.getString("ECDSA_PublicKey");
-                    String message = CA.toString();
+
                     flag = KeyGenerater.Verify_Signature(signature,publickey,message);
 
                     System.out.println("Signature: "+signature);
