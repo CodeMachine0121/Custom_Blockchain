@@ -257,7 +257,7 @@ public class UserFunctions {
         String ID = CA.getString("ID");
 
         CA.remove("RSA_PrivateKey");
-        CA.remove("ECDSA_PublicKey");
+        CA.remove("ECDSA_PrivateKey");
 
         String path = "./Certificate";
         File file = new File(path);
