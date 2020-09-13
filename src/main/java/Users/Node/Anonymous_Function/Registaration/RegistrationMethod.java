@@ -98,7 +98,7 @@ public class RegistrationMethod {
         result = KeyGenerater.RSA_Encrypt(AnonymousID.toString(),KeyGenerater.Get_RSA_PublicKey(t.RSA_Publickey));
 
 
-        // 要留在RBC的真實使用者資料 用匿名使用者的KEY 加密
+        // 要留在RBC的真實使用者資料 用匿名使用者的KEY
         JSONObject userData = new JSONObject();
         userData.put("User_ECDSA_PublicKey",t.ECDSA_Publickey);
         userData.put("User_Signature",t.signature);
@@ -107,11 +107,6 @@ public class RegistrationMethod {
 
         // 用匿名私鑰 對 UserData 做簽章 存在RBC裡面
         String signature  = KeyGenerater.Sign_Message(userData.toString(),AnonymousKeyGenerator.Get_PrivateKey_String());
-
-        System.out.println("設定簽章: 使用 "+AnonymousKeyGenerator.Get_PrivateKey_String());
-        System.out.println("原文: "+userData.toString());
-        System.out.println("簽章: "+signature);
-
 
         // 用JSON搭配ID值封裝起來
         JSONObject UserID = new JSONObject();
@@ -130,7 +125,7 @@ public class RegistrationMethod {
 
     public void Verify_Anonymous_CA()throws Exception{
 
-        // 此為匿名CA
+        //  從 CBC收到的匿名CA
         String strCA = SocketRead(nodeMethod.clientSocket);
         JSONObject CA = new JSONObject(strCA);
         System.out.println(strCA);
@@ -149,16 +144,18 @@ public class RegistrationMethod {
         for(Block block:nodeMethod.blockchain.blockchain){
             for(Transaction t:block.transactions){
                 //System.out.println(t.messages);
-                JSONObject AnonymousData;
+                JSONObject UserID;
                 try{
-                    AnonymousData = new JSONObject(t.messages);
+                    UserID = new JSONObject(t.messages);
                 }catch (Exception e){
                     continue;
                 }
 
-                if(ID.equals(AnonymousData.getString("ID"))){
-                    String signature = AnonymousData.getString("Signature");
-                    String message = AnonymousData.getString("UserID");
+                if(ID.equals(UserID.getString("ID"))){
+                    System.out.println("取得: ");
+                    String signature = UserID.getString("Signature");
+                    String message = UserID.getString("UserID");
+
                     String publickey = CA.getString("ECDSA_PublicKey");
 
                     flag = KeyGenerater.Verify_Signature(signature,publickey,message);
