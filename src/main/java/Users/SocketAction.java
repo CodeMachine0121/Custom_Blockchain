@@ -63,17 +63,19 @@ public class SocketAction {
     }
 
 //  For Wallet user
-    public static String commitTransaction(String remoteHost, Transaction transaction) throws IOException, InterruptedException, IllegalAccessException {
+    public static String commitTransaction(String remoteHost, Transaction transaction,int MODE) throws IOException, InterruptedException, IllegalAccessException {
         Socket socket = new Socket(remoteHost, SERVER_PORT);
         Thread.sleep(TIME_DELAY);
 
-        String command = "commit";
-
+        String command ;
+        if(MODE == 0)
+            command = "commit";
+        else
+            command ="registerCA";
         // send command
         SocketWrite(command,socket);
 
         // send Transaction
-
         SocketWrite(transaction.Transaction_to_JSON().toString(),socket);
 
 

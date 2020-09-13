@@ -33,7 +33,7 @@ public class RegistrationMethod {
 
         nodeMethod.Setup_ServerNode();
 
-        nodeMethod.actions.put("commit",()->{
+        nodeMethod.actions.put("registerCA",()->{
             try {
                 RegisterAnonymousCA();
             } catch (IOException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException | IllegalAccessException | InvalidKeyException | SignatureException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {

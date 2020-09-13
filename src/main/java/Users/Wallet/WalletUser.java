@@ -173,7 +173,7 @@ public class WalletUser {
 
 
         // commit transaction
-        String response = SocketAction.commitTransaction(remoteHost,transactions.get(0));
+        String response = SocketAction.commitTransaction(remoteHost,transactions.get(0),0);
 
         if("exceed length".equals(response)){
             System.out.println("該區塊交易已滿");
@@ -196,9 +196,10 @@ public class WalletUser {
         //user.balance = SocketAction.getBalance(remoteHost,user.address);
         Thread.sleep(100);
 
-
+        // 1: register, 2:transaction
+        int MODE = 1;
         // commit transaction
-        String response = SocketAction.commitTransaction(remoteHost,transactions.get(0));
+        String response = SocketAction.commitTransaction(remoteHost,transactions.get(0),MODE);
 
 
         if("exceed length".equals(response)){
