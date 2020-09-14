@@ -145,7 +145,7 @@ public class NodeMethod{
             if(SocketAction.TestConnection(remotehost)){
                 // 連線到遠端節點要取新區塊鏈
                 consensus.nodeList.add(remotehost);
-                consensus.Request_to_Node_for_Blockchain(blockchain);
+                Request_to_Node_for_Blockchain();
             }else
                 System.exit(-15);
         }
@@ -342,8 +342,12 @@ public class NodeMethod{
     public void Response_from_Node_for_Blockchain() throws IllegalAccessException, NoSuchAlgorithmException, IOException {
         blockchain.blockchain = consensus.Response_from_Node_for_Blockchain(blockchain,clientSocket);
         // 如何判斷 誰需要定時 發送請求
+        // 收指令問題
     }
-
+    // 要求其他節點進行區塊鏈比較
+    public void Request_to_Node_for_Blockchain() throws IllegalAccessException, NoSuchAlgorithmException, IOException {
+        blockchain.blockchain = consensus.Request_to_Node_for_Blockchain(blockchain);
+    }
 
 
     // 另一節點提出交換主從
