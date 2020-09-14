@@ -363,7 +363,9 @@ public class NodeMethod{
 
         // 確定 自己的 blockchain size 大於 目前的 number再傳送
         // Get blockchain size
-        int bno = Integer.parseInt(SocketRead(clientSocket));
+        String no = SocketRead(clientSocket);
+        System.out.println("bno: "+no);
+        int bno = Integer.parseInt(no);
         int localsize = blockchain.blockchain.size();
 
         System.out.println("client size: "+bno);
@@ -542,7 +544,6 @@ public class NodeMethod{
 
 
                 /* 取得區塊鏈 */
-
 
 
                 // get new blockchain
