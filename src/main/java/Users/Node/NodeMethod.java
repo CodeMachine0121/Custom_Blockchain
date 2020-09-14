@@ -46,8 +46,7 @@ public class NodeMethod{
     public int BlockNo;
     public Map<String,Runnable> actions;
 
-    public Consensus consensus = new Consensus();
-
+    public Consensus consensus;
     // 初始化 actions
     public  Map<String,Runnable> Setup_Actions(){
         Map<String,Runnable> actions = new HashMap<>();
@@ -145,8 +144,8 @@ public class NodeMethod{
             // 測試連縣
             if(SocketAction.TestConnection(remotehost)){
                 // 連線到遠端節點要取新區塊鏈
-                consensus.nodeList.add(remotehost);
-
+                if(!consensus.nodeList.contains(remotehost))
+                    consensus.nodeList.add(remotehost);
             }else
                 System.exit(-15);
         }
@@ -154,10 +153,7 @@ public class NodeMethod{
         System.out.println("輸入本節點位址:");
         System.out.print("\tip:\t");
         host = scanner.nextLine();
-
-        // Add self address in list of consensus
-        consensus.nodeList.add(host);
-
+        consensus = new Consensus(host);
 
         if(option.equals("create")){
             System.out.print("Total money in this chain:\t");
@@ -182,8 +178,10 @@ public class NodeMethod{
         ServerSocket socket =new ServerSocket(port,50,addr);
         System.out.println("節點伺服器開啟完畢");
 
-        timer = null;
+        // Add self address in list of consensus
+        consensus.nodeList.add(host);
 
+        timer = null;
 
         if(Remotehost!=null)
             timer=SetTimer(Remotehost);

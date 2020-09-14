@@ -21,10 +21,16 @@ import static Users.SocketAction.SocketWrite;
 public class Consensus {
     // 連線其他節點取得區塊練
     List<String> nodeList = new LinkedList<>();
+    String localhost ;
+    public  Consensus(String localhost){
+        this.localhost = localhost;
+    }
+
     public ArrayList<Block> Request_to_Node_for_Blockchain(Blockchain blockchain) throws IOException, IllegalAccessException, NoSuchAlgorithmException {
 
         for(String address:nodeList){
-
+            if(localhost.equals(address))
+                continue;
             Socket  socket  = new Socket(InetAddress.getByName(address),8000);
 
             // send command
@@ -92,6 +98,8 @@ public class Consensus {
 
     public List<String> Reqeust_to_Node_for_NodeList() throws IOException {
         for(String address: nodeList){
+            if(localhost.equals(address))
+                continue;
             Socket socket = new Socket(address,8000);
             // send command
             SocketWrite("nodeList exchange",socket);
