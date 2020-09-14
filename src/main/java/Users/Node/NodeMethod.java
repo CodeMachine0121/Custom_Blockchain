@@ -20,8 +20,7 @@ import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
-import static Users.SocketAction.SocketRead;
-import static Users.SocketAction.TestConnection;
+import static Users.SocketAction.*;
 
 
 public class NodeMethod{
@@ -203,7 +202,7 @@ public class NodeMethod{
                     try {
                         // get command
                         cmd = SocketRead(clientSocket);
-
+                        System.out.println("指令: "+cmd);
                         actions.get(cmd).run();
                     }
                     catch (IOException e) {
