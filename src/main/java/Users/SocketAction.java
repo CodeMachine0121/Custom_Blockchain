@@ -77,7 +77,6 @@ public class SocketAction {
             return false;
         } catch (IOException | InterruptedException e) {
             System.out.println("無連線至節點");
-            socket.close();
             return false;
         }
     }
