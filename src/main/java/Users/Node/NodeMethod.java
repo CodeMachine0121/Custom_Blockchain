@@ -132,6 +132,7 @@ public class NodeMethod{
         String option = scanner.nextLine();
 
         if(option.equals("load")){
+
             // setting remote node
             System.out.println("須輸入遠端節點:");
 
@@ -338,7 +339,7 @@ public class NodeMethod{
         if(!nodeList.contains(clientSocket.getInetAddress().toString().split("/")[1]))
             nodeList.add(clientSocket.getInetAddress().toString().split("/")[1]);
 
-        System.out.println("目前清單: ");
+        System.out.println("目前節點表: ");
         nodeList.forEach((inetAddress -> System.out.println(inetAddress)));
 
 
@@ -505,10 +506,11 @@ public class NodeMethod{
                 // 接收 nodeList
                 try{
                     String nodelist = SocketAction.SocketRead(socket);
-                    //String[] nodeArray = nodelist.split("-");
-                    System.out.println("原文: "+nodelist);
-                    //System.out.println("length: "+nodeArray.length);
-                    //nodeList = Arrays.asList(nodeArray);
+                    String[] nodeArray = nodelist.split("-");
+                    nodeList = Arrays.asList(nodeArray);
+
+                    System.out.println("目前節點表: ");
+                    nodeList.forEach((inetAddress -> System.out.println(inetAddress)));
                 }catch(Exception e){
                     e.printStackTrace();
                 }
