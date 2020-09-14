@@ -503,7 +503,10 @@ public class NodeMethod{
 
                 // 接收 nodeList
                 try{
-                    String[] nodeArray = SocketAction.SocketRead(clientSocket).split("-");
+                    String nodelist = SocketAction.SocketRead(clientSocket);
+                    String[] nodeArray = nodelist.split("-");
+                    System.out.println("原文: "+nodelist);
+                    System.out.println("length: "+nodeArray.length);
                     nodeList = Arrays.asList(nodeArray);
                 }catch(Exception e){
                     e.printStackTrace();
