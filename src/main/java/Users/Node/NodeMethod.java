@@ -569,7 +569,10 @@ public class NodeMethod{
 
                 blockchain.blockchain = UserFunctions.Convert2Blockchain(sblockchain,blocksize);
                 // 更改 buffer block previous hash
-                bufferChain.get(0).previous_hash=blockchain.blockchain.get(blockchain.blockchain.size()-1).hash;
+                //bufferChain.get(0).previous_hash=blockchain.blockchain.get(blockchain.blockchain.size()-1).hash;
+                System.out.println(blockchain.blockchain.get(blockchain.blockchain.size()-1).hash);
+                System.out.println("blockchain size: "+blockchain.blockchain.size());
+                System.out.println("bufferchain size: "+bufferChain.size());
 
 
 
