@@ -580,7 +580,7 @@ public class NodeMethod{
 
             }catch (Exception e){
                 System.out.println("與節點連線有誤(再試一次), maybe host dose not  exist");
-                //e.printStackTrace();
+                e.printStackTrace();
                 socket.close();
                 continue;
             }
