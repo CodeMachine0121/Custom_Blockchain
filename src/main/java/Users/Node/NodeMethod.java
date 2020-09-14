@@ -47,7 +47,7 @@ public class NodeMethod{
     public int BlockNo;
     public Map<String,Runnable> actions;
 
-    public List<InetAddress> nodeList = new LinkedList<>();
+    public List<String> nodeList = new LinkedList<>();
 
 
     // 初始化 actions
@@ -336,11 +336,9 @@ public class NodeMethod{
 
         // 把要求區塊練的節點 加進清單
         if(!nodeList.contains(clientSocket.getInetAddress()))
-            nodeList.add(clientSocket.getInetAddress());
-       // System.out.println("目前清單: ");
-        System.out.println(clientSocket.getInetAddress());
-
-       // nodeList.forEach((inetAddress -> System.out.println(inetAddress.getAddress())));
+            nodeList.add(clientSocket.getInetAddress().toString().split("/")[1]);
+        System.out.println("目前清單: ");
+        nodeList.forEach((inetAddress -> System.out.println(inetAddress)));
 
 
 
