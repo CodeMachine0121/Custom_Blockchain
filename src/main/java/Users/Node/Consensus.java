@@ -95,12 +95,13 @@ public class Consensus {
             Socket socket = new Socket(address,8000);
 
             // using the size of list to determine
-            String str_listSize = String.valueOf(nodeList.size());
+            String str_listSize = "nodeListSize:"+String.valueOf(nodeList.size());
             // send list size to server
             SocketWrite(str_listSize,socket);
 
             // get response from server
             String nodeList_Response = SocketRead(socket);
+
             if("client longer".equals(nodeList_Response)){
                 // parse node list to string
                 StringBuilder str_nodeList = new StringBuilder();
@@ -108,18 +109,20 @@ public class Consensus {
                     str_nodeList.append(node);
                     str_nodeList.append("-");
                 }
-
                 //send own nodeList string to server
                 SocketWrite(str_nodeList.toString(),socket);
 
-            }else if("client shorter".equals(nodeList_Response)){
+            }
+            else if("client shorter".equals(nodeList_Response)){
                 String str_nodeList_from_server = SocketRead(socket);
                 nodeList = Arrays.asList(str_nodeList_from_server.split("-"));
 
-            }else if("client equal".equals(socket)){
+            }
+            else if("client equal".equals(socket)){
 
             }
         }
+
 
         System.out.println("目前清單: ");
         nodeList.forEach(node-> System.out.println("node: "+node));
@@ -129,13 +132,14 @@ public class Consensus {
 
     public List<String> Response_from_Node_for_NodeList(Socket socket) throws IOException {
         String str_listSize_from_client = SocketRead(socket);
-        int listSize_from_Client = Integer.parseInt(str_listSize_from_client);
+        int listSize_from_Client = Integer.parseInt(str_listSize_from_client.split("nodeListSize:")[1]);
 
         if (listSize_from_Client > nodeList.size()){
             SocketWrite("client longer",socket);
             String str_nodeList_from_client = SocketRead(socket);
             nodeList = Arrays.asList(str_nodeList_from_client.split("-"));
-        }else if( listSize_from_Client < nodeList.size()){
+        }
+        else if( listSize_from_Client < nodeList.size()){
             SocketWrite("client shorter",socket);
             // parse node list to string
             StringBuilder str_nodeList = new StringBuilder();
@@ -145,7 +149,8 @@ public class Consensus {
             }
             //send own nodeList string to server
             SocketWrite(str_nodeList.toString(),socket);
-        }else if(listSize_from_Client == nodeList.size()){
+        }
+        else if(listSize_from_Client == nodeList.size()){
             SocketWrite("client equal",socket);
             // Do nothing
         }
