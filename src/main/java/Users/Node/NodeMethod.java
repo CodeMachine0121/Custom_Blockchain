@@ -139,7 +139,7 @@ public class NodeMethod{
             if(SocketAction.TestConnection(remotehost)){
                 // 連線到遠端節點要取新區塊鏈
                 consensus.nodeList.add(remotehost);
-                Request_to_Node_for_Blockchain();
+
             }else
                 System.exit(-15);
         }

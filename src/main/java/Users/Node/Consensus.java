@@ -4,6 +4,7 @@ import BlockChain.Block;
 import BlockChain.Blockchain;
 import Users.UserFunctions;
 
+import javax.sound.midi.Soundbank;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.InetAddress;
@@ -119,6 +120,10 @@ public class Consensus {
 
             }
         }
+
+        System.out.println("目前清單: ");
+        nodeList.forEach(node-> System.out.println("node: "+node));
+
         return nodeList;
     }
 
@@ -145,6 +150,8 @@ public class Consensus {
             // Do nothing
         }
 
+        System.out.println("目前清單: ");
+        nodeList.forEach(node-> System.out.println("node: "+node));
         return nodeList;
     }
 
