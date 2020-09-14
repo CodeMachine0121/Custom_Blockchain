@@ -121,7 +121,7 @@ public class Consensus {
 
             }
             else if("client equal".equals(socket)){
-
+                System.out.println("Same node list size with Server");
             }
         }
 
@@ -135,6 +135,9 @@ public class Consensus {
     public List<String> Response_from_Node_for_NodeList(Socket socket) throws IOException {
         String str_listSize_from_client = SocketRead(socket);
         int listSize_from_Client = Integer.parseInt(str_listSize_from_client.split("nodeListSize:")[1]);
+
+        System.out.println("client node size: "+listSize_from_Client);
+        System.out.println("server node size: "+nodeList.size());
 
         if (listSize_from_Client > nodeList.size()){
             SocketWrite("client longer",socket);
@@ -155,6 +158,7 @@ public class Consensus {
         else if(listSize_from_Client == nodeList.size()){
             SocketWrite("client equal",socket);
             // Do nothing
+            System.out.println("Same node list size with Client");
         }
 
         System.out.println("目前清單: ");
