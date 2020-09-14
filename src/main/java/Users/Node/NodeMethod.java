@@ -350,6 +350,7 @@ public class NodeMethod{
     }
 
     public void Response_from_Node_for_NodeList() throws IOException {
+        System.out.println("開始比對 node List....");
         consensus.nodeList = consensus.Response_from_Node_for_NodeList(clientSocket);
     }
 
