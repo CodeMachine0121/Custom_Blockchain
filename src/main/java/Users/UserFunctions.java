@@ -55,7 +55,7 @@ public class UserFunctions {
     }
 
     // For wallet users
-    public static Transaction makeTransaction(Miner user) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, UnsupportedEncodingException, SignatureException, IllegalAccessException, InvalidKeyException, NoSuchProviderException, InvalidKeySpecException {
+    public static Transaction makeTransaction(Miner user,int MODE) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, UnsupportedEncodingException, SignatureException, IllegalAccessException, InvalidKeyException, NoSuchProviderException, InvalidKeySpecException {
 
         // input information of transaction
         String sender = user.address;
@@ -68,9 +68,11 @@ public class UserFunctions {
         System.out.print("\tFee:\t");
         double fee=scanner.nextDouble();
 
-        // no enough money
-        if(user.balance< fee*Math.pow(10,-5)+amount){
-            return null;
+        if(MODE ==2 ){
+            // no enough money
+            if(user.balance< fee*Math.pow(10,-5)+amount ){
+                return null;
+            }
         }
         return user.Make_Transaction(sender,receiver,amount,fee,messages);
     }

@@ -154,7 +154,10 @@ public class WalletUser {
             return;
         }
 
-        Transaction wannaTransaction = UserFunctions.makeTransaction(user);
+        // 1: register, 2:transaction
+        System.out.print("做交易還是申請憑證呢:? (1: register, 2:transaction)\t");
+        int MODE = scanner.nextInt() ;
+        Transaction wannaTransaction = UserFunctions.makeTransaction(user,MODE);
         if(wannaTransaction==null){
             System.out.println("餘額不足");
             return;
