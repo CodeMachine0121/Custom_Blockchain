@@ -47,8 +47,7 @@ public class NodeMethod{
     public int BlockNo;
     public Map<String,Runnable> actions;
 
-    public List<String> nodeList = new LinkedList<>();
-
+    public Consensus consensus = new Consensus();
 
     // 初始化 actions
     public  Map<String,Runnable> Setup_Actions(){
@@ -83,9 +82,9 @@ public class NodeMethod{
             }
         });
         actions.put("ask-blockchain",()->{
-            try {
-                Update_Blockchain();
-            } catch (IOException | InterruptedException | IllegalAccessException | NoSuchAlgorithmException e) {
+            try { // Node ask for comparing blockchain
+                Response_from_Node_for_Blockchain();
+            } catch (IOException | IllegalAccessException | NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
         });
@@ -97,7 +96,7 @@ public class NodeMethod{
             }
         });
         actions.put("get-blockchain",()->{
-            try {
+            try { // Miner ask for blockchain
                 Get_Blockchain();
             } catch (IllegalAccessException | IOException | InterruptedException e) {
                 e.printStackTrace();
@@ -131,6 +130,8 @@ public class NodeMethod{
         System.out.print("創建區塊鏈 or 繼承區塊練(create / load):\t");
         String option = scanner.nextLine();
 
+
+
         if(option.equals("load")){
 
             // setting remote node
@@ -139,17 +140,22 @@ public class NodeMethod{
             System.out.print("\tip:\t");
             String remotehost = scanner.nextLine();
             Remotehost = InetAddress.getByName(remotehost);
+
             // 測試連縣
             if(SocketAction.TestConnection(remotehost)){
                 // 連線到遠端節點要取新區塊鏈
-                Connection_to_Node(Remotehost,port);
+                consensus.nodeList.add(remotehost);
+                consensus.Request_to_Node_for_Blockchain(blockchain);
             }else
                 System.exit(-15);
         }
 
-        System.out.println("輸入節點:");
+        System.out.println("輸入本節點位址:");
         System.out.print("\tip:\t");
         host = scanner.nextLine();
+
+        // Add self address in list of consensus
+        consensus.nodeList.add(host);
 
 
         if(option.equals("create")){
@@ -330,109 +336,15 @@ public class NodeMethod{
         System.out.println(balance);
     }
 
-    // 更新區塊鏈
-    public  void Update_Blockchain() throws IOException, InterruptedException, IllegalAccessException, NoSuchAlgorithmException  {
-        Thread.sleep(100);
-        System.out.print("\t要求區塊鏈=>\n\t\t");
-
-        // 把要求區塊練的節點 加進清單
-        if(!nodeList.contains(clientSocket.getInetAddress().toString().split("/")[1]))
-            nodeList.add(clientSocket.getInetAddress().toString().split("/")[1]);
-
-        System.out.println("目前節點表: ");
-        nodeList.forEach((inetAddress -> System.out.println(inetAddress)));
 
 
-
-        if(blockchain.blockchain.size()==0){
-            SocketAction.SocketWrite("No chain in this node", clientSocket);
-            //throw new IOException();
-            return;
-        }else{
-            SocketAction.SocketWrite("I have chain", clientSocket);
-
-            // 把自己的 address List 回傳過去
-
-            StringBuilder builder = new StringBuilder();
-            for (String remote:nodeList){
-                builder.append(remote);
-                builder.append("-");
-            }
-
-            SocketAction.SocketWrite(builder.toString(),clientSocket);
-
-        }
-
-        // 確定 自己的 blockchain size 大於 目前的 number再傳送
-        // Get blockchain size
-        String no = SocketRead(clientSocket);
-        System.out.println("bno: "+no);
-        int bno = Integer.parseInt(no);
-        int localsize = blockchain.blockchain.size();
-
-        System.out.println("client size: "+bno);
-        System.out.println("\t\tlocal size:"+blockchain.blockchain.size());
-
-        // send response
-        if(bno>localsize){ // client longer
-            SocketAction.SocketWrite("Ur chain longer", clientSocket);
-            // 須與該節點要求區塊練
-
-            // get new blockchain
-            String sblockchain = SocketRead(clientSocket);
-            System.out.println("get new chain\n\t"+sblockchain);
-
-            // get new blockchain size
-            int blocksize = Integer.parseInt(SocketRead(clientSocket));
-            System.out.println("new size: "+blocksize);
-
-            // 設定排程 固定跟client要求區塊鏈
-            System.out.println("變更主節點: "+clientSocket.getInetAddress());
-
-            // 之後必須統一port
-            timer = SetTimer(clientSocket.getInetAddress());
-
-            // 確定此時有無 主節點存在
-            /*
-             *  有: 取消自身timer 回傳給主節點要求更換
-             *  無: 掠過直接設定主節點
-             * */
-            if(master!=null){
-                CancelTimer(timer);
-                Socket mastersocket = new Socket(master,port);
-                Thread.sleep(100);
-                SocketAction.SocketWrite("changeMaster", mastersocket);
-                mastersocket.close();
-            }
-
-            // 設定master
-            master = clientSocket.getInetAddress();
-
-            blockchain.blockchain=UserFunctions.Convert2Blockchain(sblockchain,blocksize);
-            // 更改 buffer block previous hash
-            bufferChain.get(0).previous_hash=blockchain.blockchain.get(blockchain.blockchain.size()-1).hash;
-
-            throw new IOException();
-        }
-        else if(bno==localsize){
-            SocketAction.SocketWrite("same length", clientSocket);
-            return;
-        }
-        else{
-            SocketAction.SocketWrite("longer", clientSocket);
-        }
-
-
-        // Send blockchain
-        Thread.sleep(100);
-        String sblockchain = blockchain.get_All_Blocks_JSON();
-        SocketAction.SocketWrite(sblockchain, clientSocket);
-
-        Thread.sleep(100);
-        // 如果自己的鏈比較長=> send blockchain size
-        SocketAction.SocketWrite(String.valueOf(localsize), clientSocket);
-
+    // 其他節點要求 區塊鏈比較
+    public void Response_from_Node_for_Blockchain() throws IllegalAccessException, NoSuchAlgorithmException, IOException {
+        blockchain.blockchain = consensus.Response_from_Node_for_Blockchain(blockchain,clientSocket);
+        // 如何判斷 誰需要定時 發送請求
     }
+
+
 
     // 另一節點提出交換主從
     public  void Change_Master() throws UnknownHostException {
@@ -464,8 +376,8 @@ public class NodeMethod{
             @Override
             public void run() {
                 try {
-                    Connection_to_Node(Remotehost,port);
-                } catch (IOException e) {
+                    consensus.Request_to_Node_for_Blockchain(blockchain);
+                } catch (IOException | IllegalAccessException | NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 }
             }
@@ -479,125 +391,8 @@ public class NodeMethod{
         timer.cancel();
     }
 
-    // 連線其他節點取得區塊練
-    public  void Connection_to_Node(InetAddress host, int port) throws IOException {
-        String debug="";
-        while(!host.equals("no")){
-            // 測試連線
 
-            Socket socket = null;
-            try{
-                // connect node
-                socket = new Socket(host, port);
-
-                // send command
-                SocketAction.SocketWrite("ask-blockchain", socket);
-                Thread.sleep(100);
-
-
-                // get response
-                String res = SocketRead(socket);
-                if(!res.equals("I have chain")){
-                    System.out.println("Remote Node have no Chain");
-                    socket.close();
-                    return ;
-                }
-
-                // 接收 nodeList
-                try{
-                    String nodelist = SocketAction.SocketRead(socket);
-                    String[] nodeArray = nodelist.split("-");
-                    nodeList = Arrays.asList(nodeArray);
-
-                    System.out.println("目前節點表: ");
-                    nodeList.forEach((inetAddress -> System.out.println(inetAddress)));
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-
-                int oldSize = blockchain.blockchain.size();
-
-                // send blockchain size
-                SocketAction.SocketWrite(String.valueOf(oldSize), socket);
-                Thread.sleep(100);
-                // get response
-                res = SocketRead(socket);
-
-                if(res.equals("same length")){ // 一樣長度
-                    System.out.println("Remote Node have same length chain");
-                    socket.close();
-                    break;
-                }
-                else if(res.equals("Ur chain longer")){
-                    // client比較長
-                    // send own blockchain to the node
-                    System.out.println("Your blockchain is longer");
-                    int localsize = blockchain.blockchain.size();
-
-                    // Send blockchain
-                    Thread.sleep(100);
-                    String sblockchain = blockchain.get_All_Blocks_JSON();
-                    SocketAction.SocketWrite(sblockchain, socket);
-
-                    Thread.sleep(100);
-                    // 如果自己的鏈比較長=> send blockchain size
-                    SocketAction.SocketWrite(String.valueOf(localsize), socket);
-
-                    // 更新 master
-                    master = null;
-                    // 取消排程
-                    CancelTimer(timer);
-
-                    socket.close();
-                    break;
-                }
-
-
-                /* 取得區塊鏈 */
-
-
-                // get new blockchain
-                String sblockchain = SocketRead(socket);
-
-                // get new blockchain size
-                int blocksize = Integer.parseInt(SocketRead(socket));
-
-
-                System.out.println("get new chain\n");
-                UserFunctions.printOutBlockchain(sblockchain,blocksize);
-                System.out.println("new size: "+blocksize);
-
-
-                blockchain.blockchain = UserFunctions.Convert2Blockchain(sblockchain,blocksize);
-                // 更改 buffer block previous hash
-                System.out.println("buffer size: "+bufferChain.size());
-                Block block = new Block(blockchain.blockchain.get(blockchain.blockchain.size()-1).hash,Blockchain.difficulty);
-                bufferChain.clear();
-                bufferChain.add(block);
-
-
-                // 設定 master
-                master=socket.getInetAddress();
-                // 設定 新排成
-                timer = SetTimer(master);
-
-                if(blockchain.blockchain.size() > oldSize){
-                    socket.close();
-                    break;
-                }
-
-            }catch (Exception e){
-                System.out.println("與節點連線有誤(再試一次), maybe host dose not  exist");
-                e.printStackTrace();
-                socket.close();
-                return;
-            }
-        }
-        return;
-    }
-
-
-    public Block MakeEmptyBlock(String previouhash, int No) throws IOException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalAccessException, InvalidKeyException, BadPaddingException, SignatureException, IllegalBlockSizeException {
+    public Block MakeEmptyBlock(String previouhash, int No) throws IOException, NoSuchAlgorithmException {
         Block block = new Block(previouhash,Blockchain.difficulty);
         block.No =  No;
         return block;
