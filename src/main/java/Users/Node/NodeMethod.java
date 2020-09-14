@@ -338,7 +338,9 @@ public class NodeMethod{
         if(!nodeList.contains(clientSocket.getInetAddress()))
             nodeList.add(clientSocket.getInetAddress());
         System.out.println("目前清單: ");
-        nodeList.forEach((inetAddress -> System.out.println(inetAddress.getAddress())));
+        System.out.println(clientSocket.getInetAddress());
+
+       // nodeList.forEach((inetAddress -> System.out.println(inetAddress.getAddress())));
 
 
 
