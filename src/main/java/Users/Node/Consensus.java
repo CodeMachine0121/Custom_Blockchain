@@ -84,7 +84,7 @@ public class Consensus {
         }
 
 
-        this.nodeList = Response_from_Node_for_NodeList(socket);
+
         return blockchain.blockchain;
     }
 
@@ -93,6 +93,8 @@ public class Consensus {
     public List<String> Reqeust_to_Node_for_NodeList() throws IOException {
         for(String address: nodeList){
             Socket socket = new Socket(address,8000);
+            // send command
+            System.out.println("nodeList exchange");
 
             // using the size of list to determine
             String str_listSize = "nodeListSize:"+String.valueOf(nodeList.size());

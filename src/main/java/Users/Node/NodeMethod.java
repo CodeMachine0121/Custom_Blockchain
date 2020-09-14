@@ -97,6 +97,13 @@ public class NodeMethod{
             }
         });
 
+        actions.put("nodeList exchange",()->{
+            try {
+                Response_from_Node_for_NodeList();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
         actions.put("test", ()->{Test_Connection();});
 
         return actions;
@@ -342,6 +349,9 @@ public class NodeMethod{
         blockchain.blockchain = consensus.Request_to_Node_for_Blockchain(blockchain);
     }
 
+    public void Response_from_Node_for_NodeList() throws IOException {
+        consensus.nodeList = consensus.Response_from_Node_for_NodeList(clientSocket);
+    }
 
     // 回應Miner目前區塊鏈
     public  void Request_Whole_Blockchain() throws IllegalAccessException, IOException, InterruptedException {
@@ -366,7 +376,7 @@ public class NodeMethod{
             @Override
             public void run() {
                 try {
-                    consensus.Request_to_Node_for_Blockchain(blockchain);
+                    Request_to_Node_for_Blockchain();
                 } catch (IOException | IllegalAccessException | NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 }
