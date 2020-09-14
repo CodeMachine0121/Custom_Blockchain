@@ -493,20 +493,17 @@ public class NodeMethod{
                 Thread.sleep(100);
 
 
-                // 接收 nodeList
-                String[] nodeArray = SocketAction.SocketRead(clientSocket).split("-");
-                nodeList = Arrays.asList(nodeArray);
-
-
                 // get response
                 String res = SocketRead(socket);
                 if(!res.equals("I have chain")){
                     System.out.println("Remote Node have no Chain");
                     socket.close();
-                    continue;
+                    return ;
                 }
 
-
+                // 接收 nodeList
+                String[] nodeArray = SocketAction.SocketRead(clientSocket).split("-");
+                nodeList = Arrays.asList(nodeArray);
 
 
                 int oldSize = blockchain.blockchain.size();
@@ -582,7 +579,7 @@ public class NodeMethod{
                 System.out.println("與節點連線有誤(再試一次), maybe host dose not  exist");
                 e.printStackTrace();
                 socket.close();
-                continue;
+                return ;
             }
         }
         return;
