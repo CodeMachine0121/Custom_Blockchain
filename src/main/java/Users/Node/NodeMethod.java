@@ -351,7 +351,14 @@ public class NodeMethod{
             SocketAction.SocketWrite("I have chain", clientSocket);
 
             // 把自己的 address List 回傳過去
-            SocketAction.SocketWrite_nodeList(nodeList,clientSocket);
+
+            StringBuilder builder = new StringBuilder();
+            for (String remote:nodeList){
+                builder.append(remote);
+                builder.append("-");
+            }
+
+            SocketAction.SocketWrite(builder.toString(),clientSocket);
         }
 
         // 確定 自己的 blockchain size 大於 目前的 number再傳送
@@ -492,7 +499,8 @@ public class NodeMethod{
                 }
 
                 // 接收 nodeList
-                nodeList = SocketAction.SocketRead_nodeList(clientSocket);
+                String[] nodeArray = SocketAction.SocketRead(clientSocket).split("-");
+                nodeList = Arrays.asList(nodeArray);
 
 
                 int oldSize = blockchain.blockchain.size();

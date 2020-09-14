@@ -40,25 +40,6 @@ public class SocketAction {
         return greeting;
     }
 
-    public static void SocketWrite_nodeList(List<String> nodeList,Socket socket) throws IOException {
-        OutputStream outputStream = socket.getOutputStream();
-
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-
-        objectOutputStream.writeObject(nodeList);
-
-        objectOutputStream.close();
-        outputStream.close();
-    }
-    public static List<String> SocketRead_nodeList(Socket socket) throws IOException, ClassNotFoundException {
-        InputStream inputStream = socket.getInputStream();
-        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-        List<String> list =  (List<String>) objectInputStream.readObject();
-
-        objectInputStream.close();
-        inputStream.close();
-        return list;
-    }
 
     public static boolean TestConnection(String remoteHost) throws IOException {
         System.out.println("測試連線....");
