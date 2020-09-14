@@ -335,15 +335,17 @@ public class NodeMethod{
         System.out.print("\t要求區塊鏈=>\n\t\t");
 
         // 把要求區塊練的節點 加進清單
-        nodeList.add(clientSocket.getInetAddress());
+        if(!nodeList.contains(clientSocket.getInetAddress()))
+            nodeList.add(clientSocket.getInetAddress());
         System.out.println("目前清單: ");
         nodeList.forEach((inetAddress -> System.out.println(inetAddress.getAddress())));
-         
+
 
 
         if(blockchain.blockchain.size()==0){
             SocketAction.SocketWrite("No chain in this node", clientSocket);
-            throw new IOException();
+            //throw new IOException();
+            return;
         }else{
             SocketAction.SocketWrite("I have chain", clientSocket);
 
@@ -402,7 +404,7 @@ public class NodeMethod{
         }
         else if(bno==localsize){
             SocketAction.SocketWrite("same length", clientSocket);
-            throw new IOException();
+            return;
         }
         else{
             SocketAction.SocketWrite("longer", clientSocket);

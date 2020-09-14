@@ -46,11 +46,17 @@ public class SocketAction {
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
 
         objectOutputStream.writeObject(nodeList);
+
+        objectOutputStream.close();
+        outputStream.close();
     }
     public static List<InetAddress> SocketRead_nodeList(Socket socket) throws IOException, ClassNotFoundException {
         InputStream inputStream = socket.getInputStream();
         ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
         List<InetAddress> list =  (List<InetAddress>) objectInputStream.readObject();
+
+        objectInputStream.close();
+        inputStream.close();
         return list;
     }
 
