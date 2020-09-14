@@ -504,7 +504,7 @@ public class NodeMethod{
 
                 // 接收 nodeList
                 try{
-                    String nodelist = SocketAction.SocketRead(clientSocket);
+                    String nodelist = SocketAction.SocketRead(socket);
                     //String[] nodeArray = nodelist.split("-");
                     System.out.println("原文: "+nodelist);
                     //System.out.println("length: "+nodeArray.length);
@@ -514,7 +514,7 @@ public class NodeMethod{
                 }
 
                 int oldSize = blockchain.blockchain.size();
-                System.out.println(oldSize);
+
                 // send blockchain size
                 SocketAction.SocketWrite(String.valueOf(oldSize), socket);
                 Thread.sleep(100);
@@ -586,7 +586,7 @@ public class NodeMethod{
                 System.out.println("與節點連線有誤(再試一次), maybe host dose not  exist");
                 e.printStackTrace();
                 socket.close();
-                return ;
+                return;
             }
         }
         return;
