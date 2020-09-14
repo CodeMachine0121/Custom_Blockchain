@@ -337,7 +337,7 @@ public class NodeMethod{
         // 把要求區塊練的節點 加進清單
         if(!nodeList.contains(clientSocket.getInetAddress()))
             nodeList.add(clientSocket.getInetAddress());
-        System.out.println("目前清單: ");
+       // System.out.println("目前清單: ");
         System.out.println(clientSocket.getInetAddress());
 
        // nodeList.forEach((inetAddress -> System.out.println(inetAddress.getAddress())));
