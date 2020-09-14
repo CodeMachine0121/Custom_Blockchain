@@ -24,6 +24,7 @@ public class Consensus {
     String localhost ;
     public  Consensus(String localhost){
         this.localhost = localhost;
+        nodeList.add(localhost);
     }
 
     public ArrayList<Block> Request_to_Node_for_Blockchain(Blockchain blockchain) throws IOException, IllegalAccessException, NoSuchAlgorithmException {

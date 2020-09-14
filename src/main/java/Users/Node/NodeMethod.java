@@ -142,11 +142,7 @@ public class NodeMethod{
             Remotehost = InetAddress.getByName(remotehost);
 
             // 測試連縣
-            if(SocketAction.TestConnection(remotehost)){
-                // 連線到遠端節點要取新區塊鏈
-                if(!consensus.nodeList.contains(remotehost))
-                    consensus.nodeList.add(remotehost);
-            }else
+            if(!SocketAction.TestConnection(remotehost))
                 System.exit(-15);
         }
 
@@ -154,6 +150,7 @@ public class NodeMethod{
         System.out.print("\tip:\t");
         host = scanner.nextLine();
         consensus = new Consensus(host);
+        // Add remote address to node list
 
         if(option.equals("create")){
             System.out.print("Total money in this chain:\t");
@@ -178,8 +175,6 @@ public class NodeMethod{
         ServerSocket socket =new ServerSocket(port,50,addr);
         System.out.println("節點伺服器開啟完畢");
 
-        // Add self address in list of consensus
-        consensus.nodeList.add(host);
 
         timer = null;
 
@@ -189,6 +184,9 @@ public class NodeMethod{
         while(true) {
 
             clientSocket=socket.accept();
+            // 將連進來的節點位址加進清單
+            if(!consensus.nodeList.contains(clientSocket.getInetAddress().toString().split("/")[1]));
+                consensus.nodeList.add(clientSocket.getInetAddress().toString().split("/")[1]);
 
             if(bufferChain.size()==0){
                 Block block;
