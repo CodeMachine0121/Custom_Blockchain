@@ -180,4 +180,27 @@ public class RegistrationMethod {
 
     }
 
+
+/*
+    public Boolean Revoke_Anonymous_CA(String str_Anonymous_CA)throws Exception{
+
+
+         * Anonymous CA 內容
+         *  ID
+         *  ECDSA_PublicKey
+         *  ECDSA_PrivateKey
+         *  RSA_PublicKey
+         *  RSA_PrivateKey
+
+         * Transaction 內容
+         *   UserID:
+         *       USER_ECDSA_PublicKey
+         *       USER_RSA_PublicKey
+         *       USER_Signature
+         *       USER_Signature_Message
+         *
+        JSONObject AnonymousCA = new JSONObject(str_Anonymous_CA);
+
+
+    }*/
 }

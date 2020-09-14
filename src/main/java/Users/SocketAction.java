@@ -7,10 +7,7 @@ import BlockChain.Transaction;
 import org.json.JSONObject;
 
 import javax.crypto.NoSuchPaddingException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -20,6 +17,8 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Timer;
 
 
@@ -27,9 +26,9 @@ public class SocketAction {
 
     public static final int SERVER_PORT=8000;
     public static final long TIME_DELAY=100;
-    public int getSERVER_PORT() {
-        return SERVER_PORT;
-    }
+
+
+
 
     public static void SocketWrite(String msg, Socket socket) throws IOException {
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -41,6 +40,20 @@ public class SocketAction {
         return greeting;
     }
 
+    public static void SocketWrite_nodeList(List<InetAddress> nodeList,Socket socket) throws IOException {
+        OutputStream outputStream = socket.getOutputStream();
+
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+
+        objectOutputStream.writeObject(nodeList);
+    }
+    public static List<InetAddress> SocketRead_nodeList(Socket socket) throws IOException, ClassNotFoundException {
+        InputStream inputStream = socket.getInputStream();
+        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+        List<InetAddress> list =  (List<InetAddress>) objectInputStream.readObject();
+        return list;
+    }
+
     public static boolean TestConnection(String remoteHost) throws IOException {
         System.out.println("測試連線....");
         Socket socket = null;
@@ -49,6 +62,7 @@ public class SocketAction {
             SocketWrite("test",socket);
             Thread.sleep(TIME_DELAY);
             System.out.println("連線成功");
+
             socket.close();
             return true;
         }catch (UnknownHostException e){

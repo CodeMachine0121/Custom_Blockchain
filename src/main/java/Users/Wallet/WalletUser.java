@@ -289,4 +289,23 @@ public class WalletUser {
         return !"Fail".equals(result);
     }
 
+/*
+    // 註銷 CA
+    public static Boolean RevokeCA(String strCA,PrivateKey AnonymousPrivateKey){
+        /*
+        * CA 內容
+        *   ID:
+        *   Signature:
+        *   UserID:
+        *       USER_ECDSA_PublicKey
+        *       USER_RSA_PublicKey
+        *       USER_Signature
+        *       USER_Signature_Message
+        *
+
+        JSONObject CA = new JSONObject(strCA);
+        String ID = CA.getString("ID");
+
+    }
+*/
 }

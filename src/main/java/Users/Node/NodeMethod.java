@@ -21,6 +21,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
 import static Users.SocketAction.SocketRead;
+import static Users.SocketAction.TestConnection;
 
 
 public class NodeMethod{
@@ -45,6 +46,8 @@ public class NodeMethod{
     public Socket clientSocket;
     public int BlockNo;
     public Map<String,Runnable> actions;
+
+    public List<InetAddress> nodeList = new LinkedList<>();
 
 
     // 初始化 actions
@@ -331,11 +334,17 @@ public class NodeMethod{
         Thread.sleep(100);
         System.out.print("\t要求區塊鏈=>\n\t\t");
 
+        // 把要求區塊練的節點 加進清單
+        nodeList.add(clientSocket.getInetAddress());
+
         if(blockchain.blockchain.size()==0){
             SocketAction.SocketWrite("No chain in this node", clientSocket);
             throw new IOException();
         }else{
             SocketAction.SocketWrite("I have chain", clientSocket);
+
+            // 把自己的 address List 回傳過去
+            SocketAction.SocketWrite_nodeList(nodeList,clientSocket);
         }
 
         // 確定 自己的 blockchain size 大於 目前的 number再傳送
@@ -456,8 +465,13 @@ public class NodeMethod{
     public  void Connection_to_Node(InetAddress host, int port) throws IOException {
         String debug="";
         while(!host.equals("no")){
-            Socket socket = new Socket(host, port);;
+            // 測試連線
+
+            Socket socket = null;
             try{
+                // connect node
+                socket = new Socket(host, port);
+
                 // send command
                 SocketAction.SocketWrite("ask-blockchain", socket);
                 Thread.sleep(100);
@@ -469,6 +483,10 @@ public class NodeMethod{
                     socket.close();
                     continue;
                 }
+
+                // 接收 nodeList
+                nodeList = SocketAction.SocketRead_nodeList(clientSocket);
+
 
                 int oldSize = blockchain.blockchain.size();
 
