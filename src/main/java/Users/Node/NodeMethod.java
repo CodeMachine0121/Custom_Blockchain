@@ -359,6 +359,7 @@ public class NodeMethod{
             }
 
             SocketAction.SocketWrite(builder.toString(),clientSocket);
+            System.out.println(builder.toString());
         }
 
         // 確定 自己的 blockchain size 大於 目前的 number再傳送
