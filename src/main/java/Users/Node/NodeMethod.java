@@ -336,6 +336,10 @@ public class NodeMethod{
 
         // 把要求區塊練的節點 加進清單
         nodeList.add(clientSocket.getInetAddress());
+        System.out.println("目前清單: ");
+        nodeList.forEach((inetAddress -> System.out.println(inetAddress.getAddress())));
+        
+
 
         if(blockchain.blockchain.size()==0){
             SocketAction.SocketWrite("No chain in this node", clientSocket);
