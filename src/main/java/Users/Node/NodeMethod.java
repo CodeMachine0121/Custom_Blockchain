@@ -359,7 +359,7 @@ public class NodeMethod{
             }
 
             SocketAction.SocketWrite(builder.toString(),clientSocket);
-            System.out.println(builder.toString());
+
         }
 
         // 確定 自己的 blockchain size 大於 目前的 number再傳送
@@ -505,10 +505,10 @@ public class NodeMethod{
                 // 接收 nodeList
                 try{
                     String nodelist = SocketAction.SocketRead(clientSocket);
-                    String[] nodeArray = nodelist.split("-");
+                    //String[] nodeArray = nodelist.split("-");
                     System.out.println("原文: "+nodelist);
-                    System.out.println("length: "+nodeArray.length);
-                    nodeList = Arrays.asList(nodeArray);
+                    //System.out.println("length: "+nodeArray.length);
+                    //nodeList = Arrays.asList(nodeArray);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
