@@ -338,7 +338,7 @@ public class NodeMethod{
         nodeList.add(clientSocket.getInetAddress());
         System.out.println("目前清單: ");
         nodeList.forEach((inetAddress -> System.out.println(inetAddress.getAddress())));
-        
+         
 
 
         if(blockchain.blockchain.size()==0){
