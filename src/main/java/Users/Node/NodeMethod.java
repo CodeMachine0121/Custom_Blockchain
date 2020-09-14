@@ -492,6 +492,12 @@ public class NodeMethod{
                 SocketAction.SocketWrite("ask-blockchain", socket);
                 Thread.sleep(100);
 
+
+                // 接收 nodeList
+                String[] nodeArray = SocketAction.SocketRead(clientSocket).split("-");
+                nodeList = Arrays.asList(nodeArray);
+
+
                 // get response
                 String res = SocketRead(socket);
                 if(!res.equals("I have chain")){
@@ -500,9 +506,7 @@ public class NodeMethod{
                     continue;
                 }
 
-                // 接收 nodeList
-                String[] nodeArray = SocketAction.SocketRead(clientSocket).split("-");
-                nodeList = Arrays.asList(nodeArray);
+
 
 
                 int oldSize = blockchain.blockchain.size();
