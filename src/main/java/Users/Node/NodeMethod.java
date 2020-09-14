@@ -502,12 +502,15 @@ public class NodeMethod{
                 }
 
                 // 接收 nodeList
-                String[] nodeArray = SocketAction.SocketRead(clientSocket).split("-");
-                nodeList = Arrays.asList(nodeArray);
-
+                try{
+                    String[] nodeArray = SocketAction.SocketRead(clientSocket).split("-");
+                    nodeList = Arrays.asList(nodeArray);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
 
                 int oldSize = blockchain.blockchain.size();
-
+                System.out.println(oldSize);
                 // send blockchain size
                 SocketAction.SocketWrite(String.valueOf(oldSize), socket);
                 Thread.sleep(100);
