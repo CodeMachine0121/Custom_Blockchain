@@ -94,7 +94,7 @@ public class Consensus {
         for(String address: nodeList){
             Socket socket = new Socket(address,8000);
             // send command
-            System.out.println("nodeList exchange");
+            SocketWrite("nodeList exchange",socket);
 
             // using the size of list to determine
             String str_listSize = "nodeListSize:"+String.valueOf(nodeList.size());
