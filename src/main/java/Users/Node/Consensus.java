@@ -53,6 +53,8 @@ public class Consensus {
                 System.out.println("Same chain size with Server");
             }
 
+            // After comparing blockchain, then Compare node list
+            this.nodeList = Reqeust_to_Node_for_NodeList();
         }
 
         return blockchain.blockchain;
@@ -80,6 +82,8 @@ public class Consensus {
             System.out.println("Same chain size with Client");
         }
 
+
+        this.nodeList = Response_from_Node_for_NodeList(socket);
         return blockchain.blockchain;
     }
 

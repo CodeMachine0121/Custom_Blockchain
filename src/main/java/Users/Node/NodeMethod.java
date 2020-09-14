@@ -81,24 +81,19 @@ public class NodeMethod{
                 e.printStackTrace();
             }
         });
-        actions.put("ask-blockchain",()->{
-            try { // Node ask for comparing blockchain
-                Response_from_Node_for_Blockchain();
-            } catch (IOException | IllegalAccessException | NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
-        });
-        actions.put("changeMaster",()->{
-            try {
-                Change_Master();
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-        });
+
         actions.put("get-blockchain",()->{
             try { // Miner ask for blockchain
-                Get_Blockchain();
+                Request_Whole_Blockchain();
             } catch (IllegalAccessException | IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        actions.put("Request_Node",()->{
+            try {
+                Response_from_Node_for_Blockchain();
+            } catch (IllegalAccessException | IOException | NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
         });
@@ -229,8 +224,6 @@ public class NodeMethod{
     }
 
 
-
-
     /* 指令 methods */
     public void Ask_Block() throws InterruptedException, IOException, SignatureException, NoSuchAlgorithmException, InvalidKeyException, IllegalAccessException {
         System.out.print("\t要求節點=>\t");
@@ -340,6 +333,7 @@ public class NodeMethod{
 
     // 其他節點要求 區塊鏈比較
     public void Response_from_Node_for_Blockchain() throws IllegalAccessException, NoSuchAlgorithmException, IOException {
+        consensus.nodeList.add(clientSocket.getInetAddress().toString().split("/")[1]);
         blockchain.blockchain = consensus.Response_from_Node_for_Blockchain(blockchain,clientSocket);
         // 如何判斷 誰需要定時 發送請求
         // 收指令問題
@@ -350,15 +344,8 @@ public class NodeMethod{
     }
 
 
-    // 另一節點提出交換主從
-    public  void Change_Master() throws UnknownHostException {
-        System.out.println("更換主節點");
-        master = clientSocket.getInetAddress();
-        timer = SetTimer(master);
-    }
-
     // 回應Miner目前區塊鏈
-    public  void Get_Blockchain() throws IllegalAccessException, IOException, InterruptedException {
+    public  void Request_Whole_Blockchain() throws IllegalAccessException, IOException, InterruptedException {
         System.out.println("\t下載區塊鏈\t");
         SocketAction.SocketWrite(blockchain.get_All_Blocks_JSON(), clientSocket);
         Thread.sleep(100);
