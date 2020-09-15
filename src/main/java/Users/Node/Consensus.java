@@ -28,11 +28,11 @@ public class Consensus {
     }
 
     public ArrayList<Block> Request_to_Node_for_Blockchain(Blockchain blockchain) throws IOException, IllegalAccessException, NoSuchAlgorithmException, InterruptedException {
-
+        Socket socket=null;
         for(String address:nodeList) {
             if (localhost.equals(address))
                 continue;
-            Socket socket = new Socket(InetAddress.getByName(address), 8000);
+            socket = new Socket(InetAddress.getByName(address), 8000);
 
             // send command
             SocketWrite("Request_Node", socket);
@@ -60,11 +60,12 @@ public class Consensus {
                 // Do nothing
                 System.out.println("Same chain size with Server");
             }
+
         }
         System.out.println("目前區塊: ");
         UserFunctions.printOutBlockchain(blockchain.get_All_Blocks_JSON(),blockchain.blockchain.size());
 
-        this.nodeList = Reqeust_to_Node_for_NodeList();
+        this.nodeList = Reqeust_to_Node_for_NodeList(socket);
         return blockchain.blockchain;
     }
 
@@ -100,7 +101,7 @@ public class Consensus {
 
 
 
-    public List<String> Reqeust_to_Node_for_NodeList() throws IOException, InterruptedException {
+    public List<String> Reqeust_to_Node_for_NodeList(Socket socket) throws IOException, InterruptedException {
         for(String address: nodeList){
             if (localhost.equals(address))
                 continue;
@@ -108,10 +109,9 @@ public class Consensus {
             System.out.println("節點: "+address);
             if(localhost.equals(address))
                 continue;
-            Socket socket = new Socket(address,8000);
             // send command
-           // SocketWrite("nodeList exchange",socket);
-           // Thread.sleep(100);
+            //SocketWrite("nodeList exchange",socket);
+            //Thread.sleep(100);
 
             // using the size of list to determine
             String str_listSize = String.valueOf(nodeList.size());
