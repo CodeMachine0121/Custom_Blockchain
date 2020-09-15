@@ -346,7 +346,7 @@ public class NodeMethod{
         consensus.nodeList = consensus.Response_from_Node_for_NodeList(clientSocket);
     }
     // After comparing blockchain, then Compare node list
-    public void Request_to_Node_for_NodeList() throws IOException {
+    public void Request_to_Node_for_NodeList() throws IOException, InterruptedException {
         System.out.println("開始比對 node List....");
         consensus.nodeList = consensus.Reqeust_to_Node_for_NodeList();
     }
@@ -377,7 +377,7 @@ public class NodeMethod{
                 try {
                     Request_to_Node_for_Blockchain();
                     Request_to_Node_for_NodeList();
-                } catch (IOException | IllegalAccessException | NoSuchAlgorithmException e) {
+                } catch (IOException | IllegalAccessException | NoSuchAlgorithmException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }
