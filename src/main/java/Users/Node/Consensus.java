@@ -44,7 +44,8 @@ public class Consensus {
             // compare with own blockchain
             if (blockchain.blockchain.size() > blockSize) {
                 SocketWrite("client longer", socket);
-                // send own blockchain to server
+                // send own blockchain and Chain size to server
+                SocketWrite(String.valueOf(blockchain.blockchain.size()),socket);
                 SocketWrite(blockchain.get_All_Blocks_JSON(), socket);
 
             } else if (blockchain.blockchain.size() < blockSize) {
@@ -76,15 +77,17 @@ public class Consensus {
         String compareResponse = SocketRead(socket);
 
         if("client longer".equals(compareResponse)){
+            // receive blockchain size of client
+            int clientChainSize = Integer.parseInt(SocketRead(socket));
 
             System.out.println("client chain size longer than server");
             // receive blockchain from client
             String strBlockchain = SocketRead(socket);
             System.out.println("區塊練已變更");
-            blockchain.blockchain = UserFunctions.Convert2Blockchain(strBlockchain,blockSize);
+            blockchain.blockchain = UserFunctions.Convert2Blockchain(strBlockchain,clientChainSize);
         }else if("client shorter".equals(compareResponse)){
             System.out.println("client chain size shorter than server");
-            // send Blockchain to client
+            // send Blockchain  to client
             SocketWrite(blockchain.get_All_Blocks_JSON(),socket);
 
         }else if("client equal".equals(compareResponse)){
