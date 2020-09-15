@@ -53,7 +53,7 @@ public class Consensus {
 
                 // Receive blockchain from server
                 String strBlockchain = SocketRead(socket);
-                return UserFunctions.Convert2Blockchain(strBlockchain, blockSize);
+                blockchain.blockchain =  UserFunctions.Convert2Blockchain(strBlockchain, blockSize);
 
             } else if (blockchain.blockchain.size() == blockSize) {
                 SocketWrite("client equal", socket);
@@ -110,8 +110,8 @@ public class Consensus {
                 continue;
             Socket socket = new Socket(address,8000);
             // send command
-            SocketWrite("nodeList exchange",socket);
-            Thread.sleep(100);
+           // SocketWrite("nodeList exchange",socket);
+           // Thread.sleep(100);
 
             // using the size of list to determine
             String str_listSize = String.valueOf(nodeList.size());
