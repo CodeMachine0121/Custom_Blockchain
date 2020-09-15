@@ -102,6 +102,9 @@ public class Consensus {
 
     public List<String> Reqeust_to_Node_for_NodeList() throws IOException, InterruptedException {
         for(String address: nodeList){
+            if (localhost.equals(address))
+                continue;
+
             System.out.println("節點: "+address);
             if(localhost.equals(address))
                 continue;
