@@ -75,12 +75,12 @@ public class Consensus {
 
         if("client longer".equals(compareResponse)){
 
-            System.out.println("client size longer than server");
+            System.out.println("client chain size longer than server");
             // receive blockchain from client
             String strBlockchain = SocketRead(socket);
             return UserFunctions.Convert2Blockchain(strBlockchain,blockSize);
         }else if("client shorter".equals(compareResponse)){
-            System.out.println("client size shorter than server");
+            System.out.println("client chain size shorter than server");
             // send Blockchain to client
             SocketWrite(blockchain.get_All_Blocks_JSON(),socket);
 
@@ -103,7 +103,7 @@ public class Consensus {
             SocketWrite("nodeList exchange",socket);
 
             // using the size of list to determine
-            String str_listSize = "nodeListSize:"+String.valueOf(nodeList.size());
+            String str_listSize = String.valueOf(nodeList.size());
             // send list size to server
             SocketWrite(str_listSize,socket);
 
@@ -111,6 +111,7 @@ public class Consensus {
             String nodeList_Response = SocketRead(socket);
 
             if("client longer".equals(nodeList_Response)){
+                System.out.println("client node list size longer than server");
                 // parse node list to string
                 StringBuilder str_nodeList = new StringBuilder();
                 for(String node:nodeList){
@@ -122,6 +123,7 @@ public class Consensus {
 
             }
             else if("client shorter".equals(nodeList_Response)){
+                System.out.println("client node list size shorter than server");
                 String str_nodeList_from_server = SocketRead(socket);
                 nodeList = Arrays.asList(str_nodeList_from_server.split("-"));
 
@@ -140,7 +142,7 @@ public class Consensus {
 
     public List<String> Response_from_Node_for_NodeList(Socket socket) throws IOException {
         String str_listSize_from_client = SocketRead(socket);
-        int listSize_from_Client = Integer.parseInt(str_listSize_from_client.split("nodeListSize:")[1]);
+        int listSize_from_Client = Integer.parseInt(str_listSize_from_client);
 
         System.out.println("client node size: "+listSize_from_Client);
         System.out.println("server node size: "+nodeList.size());
