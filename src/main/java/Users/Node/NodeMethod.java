@@ -179,9 +179,13 @@ public class NodeMethod{
 
 
             if(bufferChain.size()==0){
-                Block block;
-                block = MakeEmptyBlock(blockchain.blockchain.get(blockchain.blockchain.size()-1).hash,blockchain.blockchain.size()+1);
-                bufferChain.add(block);
+                try{
+                    Block block;
+                    block = MakeEmptyBlock(blockchain.blockchain.get(blockchain.blockchain.size()-1).hash,blockchain.blockchain.size()+1);
+                    bufferChain.add(block);
+                }catch (Exception e){
+                    System.out.println("由於 該節點區塊鏈為無, 加上該節點並不是創始解點 故發生錯誤");
+                }
             }
 
             new Thread(new Runnable() {
