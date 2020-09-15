@@ -94,18 +94,21 @@ public class Consensus {
 
 
 
-    public List<String> Reqeust_to_Node_for_NodeList() throws IOException {
+    public List<String> Reqeust_to_Node_for_NodeList() throws IOException, InterruptedException {
         for(String address: nodeList){
             if(localhost.equals(address))
                 continue;
             Socket socket = new Socket(address,8000);
             // send command
             SocketWrite("nodeList exchange",socket);
+            Thread.sleep(100);
 
             // using the size of list to determine
             String str_listSize = String.valueOf(nodeList.size());
             // send list size to server
+            System.out.println("before");
             SocketWrite(str_listSize,socket);
+            System.out.println("after");
 
             // get response from server
             String nodeList_Response = SocketRead(socket);
