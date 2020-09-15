@@ -130,7 +130,10 @@ public class NodeMethod{
         System.out.print("創建區塊鏈 or 繼承區塊練(create / load):\t");
         String option = scanner.nextLine();
 
-
+        System.out.println("輸入本節點位址:");
+        System.out.print("\tip:\t");
+        host = scanner.nextLine();
+        consensus = new Consensus(host);
 
         if(option.equals("load")){
 
@@ -144,13 +147,8 @@ public class NodeMethod{
             // 測試連縣
             if(!SocketAction.TestConnection(remotehost))
                 System.exit(-15);
+            consensus.nodeList.add(remotehost);
         }
-
-        System.out.println("輸入本節點位址:");
-        System.out.print("\tip:\t");
-        host = scanner.nextLine();
-        consensus = new Consensus(host);
-        // Add remote address to node list
 
         if(option.equals("create")){
             System.out.print("Total money in this chain:\t");
@@ -184,6 +182,7 @@ public class NodeMethod{
         while(true) {
 
             clientSocket=socket.accept();
+
             // 將連進來的節點位址加進清單
             if(!consensus.nodeList.contains(clientSocket.getInetAddress().toString().split("/")[1]));
                 consensus.nodeList.add(clientSocket.getInetAddress().toString().split("/")[1]);
