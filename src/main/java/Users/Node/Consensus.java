@@ -67,6 +67,7 @@ public class Consensus {
         UserFunctions.printOutBlockchain(blockchain.get_All_Blocks_JSON(),blockchain.blockchain.size());
 
         this.nodeList = Reqeust_to_Node_for_NodeList(socket);
+        socket.close();
         return blockchain.blockchain;
     }
 
@@ -101,6 +102,7 @@ public class Consensus {
 
         this.nodeList = Response_from_Node_for_NodeList(socket);
 
+        socket.close();
         return blockchain.blockchain;
     }
 
