@@ -29,39 +29,40 @@ public class Consensus {
 
     public ArrayList<Block> Request_to_Node_for_Blockchain(Blockchain blockchain) throws IOException, IllegalAccessException, NoSuchAlgorithmException {
 
-        for(String address:nodeList){
-            if(localhost.equals(address))
+        for(String address:nodeList) {
+            if (localhost.equals(address))
                 continue;
-            Socket  socket  = new Socket(InetAddress.getByName(address),8000);
+            Socket socket = new Socket(InetAddress.getByName(address), 8000);
 
             // send command
-            SocketWrite("Request_Node",socket);
+            SocketWrite("Request_Node", socket);
 
             // get Block size
             String strBlockSize = SocketRead(socket);
             int blockSize = Integer.parseInt(strBlockSize);
 
             // compare with own blockchain
-            if(blockchain.blockchain.size() > blockSize){
-                SocketWrite("client longer",socket);
+            if (blockchain.blockchain.size() > blockSize) {
+                SocketWrite("client longer", socket);
                 // send own blockchain to server
-                SocketWrite(blockchain.get_All_Blocks_JSON(),socket);
+                SocketWrite(blockchain.get_All_Blocks_JSON(), socket);
                 return blockchain.blockchain;
 
-            }else if(blockchain.blockchain.size() < blockSize){
-                SocketWrite("client shorter",socket);
+            } else if (blockchain.blockchain.size() < blockSize) {
+                SocketWrite("client shorter", socket);
 
                 // Receive blockchain from server
                 String strBlockchain = SocketRead(socket);
-                return UserFunctions.Convert2Blockchain(strBlockchain,blockSize);
+                return UserFunctions.Convert2Blockchain(strBlockchain, blockSize);
 
-            }else if(blockchain.blockchain.size() == blockSize){
-                SocketWrite("client equal",socket);
+            } else if (blockchain.blockchain.size() == blockSize) {
+                SocketWrite("client equal", socket);
                 // Do nothing
                 System.out.println("Same chain size with Server");
             }
-
         }
+        System.out.println("目前區塊: ");
+        UserFunctions.printOutBlockchain(blockchain.get_All_Blocks_JSON(),blockchain.blockchain.size());
 
         return blockchain.blockchain;
     }
@@ -88,7 +89,8 @@ public class Consensus {
             // do nothing
             System.out.println("Same chain size with Client");
         }
-
+        System.out.println("目前區塊: ");
+        UserFunctions.printOutBlockchain(blockchain.get_All_Blocks_JSON(),blockchain.blockchain.size());
         return blockchain.blockchain;
     }
 
@@ -107,7 +109,7 @@ public class Consensus {
             String str_listSize = String.valueOf(nodeList.size());
             // send list size to server
             SocketWrite(str_listSize,socket);
-
+// str_listSize 送不出去
 // Response 等不到回應
             // get response from server
             String nodeList_Response = SocketRead(socket);
@@ -144,7 +146,6 @@ public class Consensus {
 
     public List<String> Response_from_Node_for_NodeList(Socket socket) throws IOException {
         String str_listSize_from_client = SocketRead(socket);
-        System.out.println(str_listSize_from_client);
         int listSize_from_Client = Integer.parseInt(str_listSize_from_client);
 
         System.out.println("client node size: "+listSize_from_Client);
