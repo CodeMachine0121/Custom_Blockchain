@@ -221,7 +221,6 @@ public class NodeMethod{
         }
     }
 
-
     /* 指令 methods */
     public void Ask_Block() throws InterruptedException, IOException, SignatureException, NoSuchAlgorithmException, InvalidKeyException, IllegalAccessException {
         System.out.print("\t要求節點=>\t");
@@ -331,7 +330,8 @@ public class NodeMethod{
 
     // 其他節點要求 區塊鏈比較
     public void Response_from_Node_for_Blockchain() throws IllegalAccessException, NoSuchAlgorithmException, IOException {
-        consensus.nodeList.add(clientSocket.getInetAddress().toString().split("/")[1]);
+        if(!consensus.nodeList.contains(clientSocket.getInetAddress().toString().split("/")[1]))
+            consensus.nodeList.add(clientSocket.getInetAddress().toString().split("/")[1]);
         blockchain.blockchain = consensus.Response_from_Node_for_Blockchain(blockchain,clientSocket);
         // 如何判斷 誰需要定時 發送請求
         // 收指令問題
@@ -343,11 +343,11 @@ public class NodeMethod{
     }
 
     public void Response_from_Node_for_NodeList() throws IOException {
-        System.out.println("開始比對 node List....");
         consensus.nodeList = consensus.Response_from_Node_for_NodeList(clientSocket);
     }
     // After comparing blockchain, then Compare node list
     public void Request_to_Node_for_NodeList() throws IOException {
+        System.out.println("開始比對 node List....");
         consensus.nodeList = consensus.Reqeust_to_Node_for_NodeList();
     }
 

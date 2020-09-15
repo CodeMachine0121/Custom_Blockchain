@@ -75,11 +75,12 @@ public class Consensus {
 
         if("client longer".equals(compareResponse)){
 
+            System.out.println("client size longer than server");
             // receive blockchain from client
             String strBlockchain = SocketRead(socket);
             return UserFunctions.Convert2Blockchain(strBlockchain,blockSize);
         }else if("client shorter".equals(compareResponse)){
-
+            System.out.println("client size shorter than server");
             // send Blockchain to client
             SocketWrite(blockchain.get_All_Blocks_JSON(),socket);
 
@@ -87,8 +88,6 @@ public class Consensus {
             // do nothing
             System.out.println("Same chain size with Client");
         }
-
-
 
         return blockchain.blockchain;
     }
