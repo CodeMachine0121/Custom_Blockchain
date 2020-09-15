@@ -108,11 +108,11 @@ public class Consensus {
             // send list size to server
             System.out.println("before");
             SocketWrite(str_listSize,socket);
-            System.out.println("after");
+
 
             // get response from server
             String nodeList_Response = SocketRead(socket);
-
+            System.out.println("after");
             if("client longer".equals(nodeList_Response)){
                 System.out.println("client node list size longer than server");
                 // parse node list to string
