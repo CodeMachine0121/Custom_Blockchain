@@ -27,7 +27,7 @@ public class Consensus {
         nodeList.add(localhost);
     }
 
-    public ArrayList<Block> Request_to_Node_for_Blockchain(Blockchain blockchain) throws IOException, IllegalAccessException, NoSuchAlgorithmException {
+    public ArrayList<Block> Request_to_Node_for_Blockchain(Blockchain blockchain) throws IOException, IllegalAccessException, NoSuchAlgorithmException, InterruptedException {
 
         for(String address:nodeList) {
             if (localhost.equals(address))
@@ -64,6 +64,7 @@ public class Consensus {
         System.out.println("目前區塊: ");
         UserFunctions.printOutBlockchain(blockchain.get_All_Blocks_JSON(),blockchain.blockchain.size());
 
+        this.nodeList = Reqeust_to_Node_for_NodeList();
         return blockchain.blockchain;
     }
 
@@ -91,6 +92,9 @@ public class Consensus {
         }
         System.out.println("目前區塊: ");
         UserFunctions.printOutBlockchain(blockchain.get_All_Blocks_JSON(),blockchain.blockchain.size());
+
+        this.nodeList = Response_from_Node_for_NodeList(socket);
+
         return blockchain.blockchain;
     }
 
@@ -98,6 +102,7 @@ public class Consensus {
 
     public List<String> Reqeust_to_Node_for_NodeList() throws IOException, InterruptedException {
         for(String address: nodeList){
+            System.out.println("節點: "+address);
             if(localhost.equals(address))
                 continue;
             Socket socket = new Socket(address,8000);

@@ -96,13 +96,7 @@ public class NodeMethod{
             }
         });
 
-        actions.put("nodeList exchange",()->{
-            try {
-                Response_from_Node_for_NodeList();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+
         actions.put("test", ()->{Test_Connection();});
 
         return actions;
@@ -337,19 +331,12 @@ public class NodeMethod{
         // 收指令問題
     }
     // 要求其他節點進行區塊鏈比較
-    public void Request_to_Node_for_Blockchain() throws IllegalAccessException, NoSuchAlgorithmException, IOException {
+    public void Request_to_Node_for_Blockchain() throws IllegalAccessException, NoSuchAlgorithmException, IOException, InterruptedException {
         System.out.println("開始比對 blockchain....");
         blockchain.blockchain = consensus.Request_to_Node_for_Blockchain(blockchain);
     }
 
-    public void Response_from_Node_for_NodeList() throws IOException {
-        consensus.nodeList = consensus.Response_from_Node_for_NodeList(clientSocket);
-    }
-    // After comparing blockchain, then Compare node list
-    public void Request_to_Node_for_NodeList() throws IOException, InterruptedException {
-        System.out.println("開始比對 node List....");
-        consensus.nodeList = consensus.Reqeust_to_Node_for_NodeList();
-    }
+
 
 
     // 回應Miner目前區塊鏈
@@ -376,7 +363,6 @@ public class NodeMethod{
             public void run() {
                 try {
                     Request_to_Node_for_Blockchain();
-                    Request_to_Node_for_NodeList();
                 } catch (IOException | IllegalAccessException | NoSuchAlgorithmException | InterruptedException e) {
                     e.printStackTrace();
                 }
