@@ -183,9 +183,6 @@ public class NodeMethod{
 
             clientSocket=socket.accept();
 
-            // 將連進來的節點位址加進清單
-            if(!consensus.nodeList.contains(clientSocket.getInetAddress().toString().split("/")[1]));
-                consensus.nodeList.add(clientSocket.getInetAddress().toString().split("/")[1]);
 
             if(bufferChain.size()==0){
                 Block block;
