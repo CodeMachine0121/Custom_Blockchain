@@ -84,9 +84,8 @@ public class Consensus {
             System.out.println("client chain size longer than server");
             // receive blockchain from client
             String strBlockchain = SocketRead(socket);
-            System.out.println("client 鏈長: "+clientChainSize);
-            System.out.println("收到的區塊練:\n"+strBlockchain);
-            System.out.println("區塊練已變更");
+
+            System.out.println("區塊鏈已變更");
             blockchain.blockchain = UserFunctions.Convert2Blockchain(strBlockchain,clientChainSize);
         }else if("client shorter".equals(compareResponse)){
             System.out.println("client chain size shorter than server");
