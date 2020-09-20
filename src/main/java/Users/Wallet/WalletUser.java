@@ -296,10 +296,10 @@ public class WalletUser {
         return !"Fail".equals(result);
     }
 
-/*
+
     // 註銷 CA
-    public static Boolean RevokeCA(String strCA,PrivateKey AnonymousPrivateKey){
-        /*
+    public static Boolean RevokeCA(String ID,PrivateKey AnonymousPrivateKey) throws Exception {
+ /*
         * CA 內容
         *   ID:
         *   Signature:
@@ -309,10 +309,11 @@ public class WalletUser {
         *       USER_Signature
         *       USER_Signature_Message
         *
+*/      // 由於 RBC中存放資料是 匿名帳戶對 USER DATA 的簽章，所以值要傳 簽章 跟 ID 回去就行了
 
-        JSONObject CA = new JSONObject(strCA);
-        String ID = CA.getString("ID");
+       
 
+        return false;
     }
-*/
+
 }

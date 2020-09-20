@@ -254,6 +254,24 @@ public class UserFunctions {
         }
 
     }
+    public static String loadAnonymous(String ID) throws NoSuchAlgorithmException, IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalAccessException {
+        String path = "./Anonymous/"+ID;
+
+        File file = new File(path);
+        String data="";
+        try{
+            Scanner scanner = new Scanner(file);
+            data = scanner.nextLine();
+        }catch (Exception e){
+            System.out.println("No file found");
+            return null;
+        }
+
+        JSONObject anaonymousData = new JSONObject(data);
+
+        return anaonymousData.toString();
+    }
+
 
     public static void saveCertificate(JSONObject CA)throws IOException{
         String ID = CA.getString("ID");

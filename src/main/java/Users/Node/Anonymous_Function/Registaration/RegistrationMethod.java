@@ -112,7 +112,7 @@ public class RegistrationMethod {
         JSONObject UserID = new JSONObject();
         UserID.put("ID",t.receiver);
         UserID.put("Signature",signature);
-        UserID.put("UserID",userData.toString());
+        UserID.put("UserData",userData.toString());
 
         Transaction Anonymous = nodeMethod.nodeUser.Make_Transaction(nodeMethod.nodeUser.ECDSA_publicKey,t.sender,t.amount,t.fee,UserID.toString());
 
@@ -154,7 +154,7 @@ public class RegistrationMethod {
                 if(ID.equals(UserID.getString("ID"))){
                     System.out.println("取得: ");
                     String signature = UserID.getString("Signature");
-                    String message = UserID.getString("UserID");
+                    String message = UserID.getString("UserData");
 
                     String publickey = CA.getString("ECDSA_PublicKey");
 
