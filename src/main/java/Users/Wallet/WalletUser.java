@@ -207,7 +207,8 @@ public class WalletUser {
 
         if("exceed length".equals(response)){
             System.out.println("該區塊交易已滿");
-        }else if("signature wrong".equals(response)){
+        }
+        else if("signature wrong".equals(response)){
             System.out.println("交易簽章錯誤");
             transactions.remove(0);
         }

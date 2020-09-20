@@ -266,9 +266,9 @@ public class UserFunctions {
 
         if(!file.exists())
             file.mkdir();
-        file = new File(path+"/"+ID);
 
-        if(file.createNewFile()){
+        File CAfile = new File(path+"/"+ID);
+        if(CAfile.createNewFile()){
             System.out.println("Create file....");
             FileWriter writer = new FileWriter(path+"/"+ID);
 
@@ -277,14 +277,13 @@ public class UserFunctions {
             writer.close();
         }else{
 
-            if(file.delete()){
-                System.out.println("Update file....");
-                FileWriter writer = new FileWriter(path+"/"+ID);
-
-                writer.write(CA.toString());
-
-                writer.close();
-
+            if(CAfile.delete()){
+                if(CAfile.createNewFile()){
+                    System.out.println("Update file....");
+                    FileWriter writer = new FileWriter(path+"/"+ID);
+                    writer.write(CA.toString());
+                    writer.close();
+                }
             }else{
                 System.out.println("Can't update file");
             }
