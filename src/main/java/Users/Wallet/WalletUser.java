@@ -106,7 +106,7 @@ public class WalletUser {
             if("".equals(command))
                 continue;
             try{
-                System.out.println("指令");
+                System.out.println("指令: "+command);
                 actions.get(command).run();
             }catch (Exception e){
                 System.out.println("Unknown command");
