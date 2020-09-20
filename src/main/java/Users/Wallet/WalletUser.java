@@ -106,6 +106,7 @@ public class WalletUser {
             if("".equals(command))
                 continue;
             try{
+                System.out.println("指令");
                 actions.get(command).run();
             }catch (Exception e){
                 System.out.println("Unknown command");
@@ -218,10 +219,10 @@ public class WalletUser {
             JSONObject CA = new JSONObject(KeyGenerater.RSA_Decrypt(response,KeyGenerater.Get_RSA_PrivateKey(user.getRSA_privateKey())));
             // 儲存匿名使用者金鑰
             UserFunctions.saveAnonymous(CA);
-
-            UserFunctions.printOutAnonymousID(CA.toString());
             // 儲存 匿名使用者之憑證
             UserFunctions.saveCertificate(CA);
+
+            UserFunctions.printOutAnonymousID(CA.toString());
 
             transactions.remove(0);
         }
