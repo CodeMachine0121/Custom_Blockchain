@@ -231,7 +231,7 @@ public class UserFunctions {
             System.out.println("Create file....");
             FileWriter writer = new FileWriter(path+"/"+ID);
 
-            writer.write(CA.getString("ECDSA_privateKey")+"\n");
+            writer.write(CA.getString("ECDSA_PrivateKey")+"\n");
             writer.write(CA.getString("ECDSA_PublicKey")+"\n");
             writer.write(CA.getString("RSA_PrivateKey")+"\n");
             writer.write(CA.getString("RSA_PublicKey")+"\n");
