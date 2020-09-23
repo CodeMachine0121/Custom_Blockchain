@@ -73,7 +73,7 @@ public class WalletUser {
         actions.put("AnonymousCA",()->{
             try {
                 Get_AnonymousCA();
-            } catch (InterruptedException | IllegalAccessException | IOException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchPaddingException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -177,7 +177,7 @@ public class WalletUser {
 
 
         // commit transaction
-        String response = SocketAction.commitTransaction(remoteHost,transactions.get(0),0);
+        String response = SocketAction.commitTransaction(remoteHost,transactions.get(0));
 
         if("exceed length".equals(response)){
             System.out.println("該區塊交易已滿");
@@ -192,7 +192,7 @@ public class WalletUser {
     }
 
     // 取得 匿名CA
-    private static void Get_AnonymousCA() throws InterruptedException, IllegalAccessException, IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+    private static void Get_AnonymousCA() throws Exception {
         if(user ==null){
             System.out.println("no wallet import");
             return;
@@ -200,10 +200,10 @@ public class WalletUser {
         //user.balance = SocketAction.getBalance(remoteHost,user.address);
         Thread.sleep(100);
 
-        // 1: register, 2:transaction
-        int MODE = 1;
+        // sign the command (wallet to RBC)
+        String signature = KeyGenerater.Sign_Message("registerCA",user.getECDSA_privateKey());
         // commit transaction
-        String response = SocketAction.commitTransaction(remoteHost,transactions.get(0),MODE);
+        String response = SocketAction.commitTransaction(remoteHost,transactions.get(0),signature);
 
 
         if("exceed length".equals(response)){
@@ -299,17 +299,17 @@ public class WalletUser {
 
     // 註銷 CA
     public static Boolean RevokeCA(String ID,PrivateKey AnonymousPrivateKey) throws Exception {
- /*
-        * CA 內容
-        *   ID:
-        *   Signature:
-        *   UserID:
-        *       USER_ECDSA_PublicKey
-        *       USER_RSA_PublicKey
-        *       USER_Signature
-        *       USER_Signature_Message
-        *
-*/      // 由於 RBC中存放資料是 匿名帳戶對 USER DATA 的簽章，所以值要傳 簽章 跟 ID 回去就行了
+        /*
+         * CA 內容
+         *   ID:
+         *   Signature:
+         *   UserID:
+         *       USER_ECDSA_PublicKey
+         *       USER_RSA_PublicKey
+         *       USER_Signature
+         *       USER_Signature_Message
+         *
+         */      // 由於 RBC中存放資料是 匿名帳戶對 USER DATA 的簽章，所以值要傳 簽章 跟 ID 回去就行了
 
 
 

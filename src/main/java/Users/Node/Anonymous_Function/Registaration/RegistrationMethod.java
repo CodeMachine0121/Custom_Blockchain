@@ -67,8 +67,17 @@ public class RegistrationMethod {
         String Stransaction = SocketRead(nodeMethod.clientSocket);
         Transaction t = UserFunctions.Convert2Transaction(Stransaction);
 
-        String result="";
+        // verify signature
+        String signature = SocketRead(nodeMethod.clientSocket);
+        if(!KeyGenerater.Verify_Signature(signature,t.ECDSA_Publickey,"registerCA") ){
+            System.out.println("\t申請簽章錯誤");
+            SocketWrite("簽章錯誤: 申請簽章錯誤", nodeMethod.clientSocket);
+            return;
+        }else {
+            SocketWrite("pass", nodeMethod.clientSocket);
+        }
 
+        String result="";
 
         // Verify the amount of transaction in one block
         if(nodeMethod.bufferChain.get(0).transactions.size()>= Block.block_limitation){
@@ -113,7 +122,7 @@ public class RegistrationMethod {
         String Anonymous_Signature  = KeyGenerater.Sign_Message(userData.toString(),AnonymousKeyGenerator.Get_PrivateKey_String());
 
         /*
-        * *
+        *
         *    ID
         *    Signature
         *    UserData:

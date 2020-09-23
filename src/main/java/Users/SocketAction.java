@@ -63,15 +63,12 @@ public class SocketAction {
     }
 
 //  For Wallet user
-    public static String commitTransaction(String remoteHost, Transaction transaction,int MODE) throws IOException, InterruptedException, IllegalAccessException {
+    public static String commitTransaction(String remoteHost, Transaction transaction) throws IOException, InterruptedException, IllegalAccessException {
         Socket socket = new Socket(remoteHost, SERVER_PORT);
         Thread.sleep(TIME_DELAY);
 
-        String command ;
-        if(MODE == 0)
-            command = "commit";
-        else
-            command ="registerCA";
+        String command = "commit";
+
         // send command
         SocketWrite(command,socket);
 
@@ -85,6 +82,33 @@ public class SocketAction {
         socket.close();
         return response;
     }
+// Wallet -> RBC
+    public static String commitTransaction(String remoteHost, Transaction transaction,String signature) throws Exception{
+        Socket socket = new Socket(remoteHost, SERVER_PORT);
+        Thread.sleep(TIME_DELAY);
+
+        String command = "registerCA";
+
+        // send command
+        SocketWrite(command,socket);
+        // send Transaction
+        SocketWrite(transaction.Transaction_to_JSON().toString(),socket);
+
+        /* check if you are real*/
+        // send signature
+        SocketWrite(signature,socket);
+        String result = SocketRead(socket);
+
+        if("pass".equals(result)){
+            // get response
+            String response = SocketRead(socket);
+            socket.close();
+            return response;
+        }else{
+            return "fail";
+        }
+    }
+
     public static double getBalance(String remoteHost,String address) throws IOException, InterruptedException {
 
         Socket socket = new Socket(remoteHost, SERVER_PORT);
