@@ -16,6 +16,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 
 import static Users.SocketAction.SocketRead;
@@ -26,6 +28,8 @@ public class RegistrationMethod {
 
 
     NodeMethod nodeMethod;
+    // 紀錄 憑證狀態
+    Dictionary<String,Integer> domain_Status = new Hashtable<>();
 
     public RegistrationMethod() throws IOException, InterruptedException, NoSuchAlgorithmException, InvalidKeyException, SignatureException, IllegalAccessException, NoSuchPaddingException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException, IllegalBlockSizeException, InvalidKeySpecException {
 
@@ -106,13 +110,28 @@ public class RegistrationMethod {
         userData.put("User_Transaction_Signature",t.messages);
 
         // 用匿名私鑰 對 UserData 做簽章 存在RBC裡面
-        String signature  = KeyGenerater.Sign_Message(userData.toString(),AnonymousKeyGenerator.Get_PrivateKey_String());
+        String Anonymous_Signature  = KeyGenerater.Sign_Message(userData.toString(),AnonymousKeyGenerator.Get_PrivateKey_String());
+
+        /*
+        * *
+        *    ID
+        *    Signature
+        *    UserData:
+        *       USER_ECDSA_PublicKey
+        *       USER_RSA_PublicKey
+        *       USER_Signature
+        *       USER_Signature_Message
+        *    Status (0=>revoke, 1=>not revoked)
+        * */
 
         // 用JSON搭配ID值封裝起來
         JSONObject UserID = new JSONObject();
         UserID.put("ID",t.receiver);
-        UserID.put("Signature",signature);
+        UserID.put("Signature",Anonymous_Signature);
         UserID.put("UserData",userData.toString());
+
+        // 啟動憑證
+        domain_Status.put(t.receiver,1);
 
         Transaction Anonymous = nodeMethod.nodeUser.Make_Transaction(nodeMethod.nodeUser.ECDSA_publicKey,t.sender,t.amount,t.fee,UserID.toString());
 
@@ -140,6 +159,7 @@ public class RegistrationMethod {
             return;
         }
 
+
         // run throw All transaction in blockchain
         for(Block block:nodeMethod.blockchain.blockchain){
             for(Transaction t:block.transactions){
@@ -158,12 +178,13 @@ public class RegistrationMethod {
 
                     String publickey = CA.getString("ECDSA_PublicKey");
 
+                    // 檢驗簽章
                     flag = KeyGenerater.Verify_Signature(signature,publickey,message);
 
-                    System.out.println("Signature: "+signature);
-
-                    if(flag)
+                    if(flag){
                         break;
+                    }
+
                 }
             }
             if(flag)
@@ -171,7 +192,12 @@ public class RegistrationMethod {
         }
         System.out.println("完成檢驗: "+flag);
         if(flag){
-            SocketWrite("Success",nodeMethod.clientSocket);
+            if(domain_Status.get(ID) == 0){
+                System.out.println("out of date");
+                SocketWrite("out of date",nodeMethod.clientSocket);
+            }else{
+                SocketWrite("Success",nodeMethod.clientSocket);
+            }
         }else{
             SocketWrite("Fail",nodeMethod.clientSocket);
         }
@@ -181,26 +207,4 @@ public class RegistrationMethod {
     }
 
 
-/*
-    public Boolean Revoke_Anonymous_CA(String str_Anonymous_CA)throws Exception{
-
-
-         * Anonymous CA 內容
-         *  ID
-         *  ECDSA_PublicKey
-         *  ECDSA_PrivateKey
-         *  RSA_PublicKey
-         *  RSA_PrivateKey
-
-         * Transaction 內容
-         *   UserID:
-         *       USER_ECDSA_PublicKey
-         *       USER_RSA_PublicKey
-         *       USER_Signature
-         *       USER_Signature_Message
-         *
-        JSONObject AnonymousCA = new JSONObject(str_Anonymous_CA);
-
-
-    }*/
 }
