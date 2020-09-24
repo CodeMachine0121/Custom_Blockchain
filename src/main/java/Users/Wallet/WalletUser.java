@@ -205,7 +205,7 @@ public class WalletUser {
         // commit transaction
         String response = SocketAction.commitTransaction(remoteHost,transactions.get(0),signature);
 
-
+        System.out.println(response);
         if("exceed length".equals(response)){
             System.out.println("該區塊交易已滿");
         }
