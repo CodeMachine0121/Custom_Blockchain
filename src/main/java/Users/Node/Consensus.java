@@ -129,8 +129,12 @@ public class Consensus {
 // str_listSize 送不出去
 //  // connection reset
             // get response from server
-            String nodeList_Response = SocketRead(socket);
-
+            String nodeList_Response="";
+            try {
+                nodeList_Response= SocketRead(socket);
+            }catch (Exception e){
+                System.out.println("/n");
+            }
             if("client longer".equals(nodeList_Response)){
                 System.out.println("client node list size longer than server");
                 // parse node list to string

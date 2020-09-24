@@ -372,7 +372,7 @@ public class NodeMethod{
         timer =new Timer();
 
         System.out.println("*********設定排程********");
-        timer.schedule(askChain, 10000, 30000);// 1秒後開始，之後每過30秒再執行
+        timer.schedule(askChain, 10000, 10000);// 1秒後開始，之後每過30秒再執行
         return timer;
     }
 
