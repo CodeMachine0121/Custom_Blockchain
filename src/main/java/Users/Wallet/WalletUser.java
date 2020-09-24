@@ -215,7 +215,7 @@ public class WalletUser {
         }
         else {
             System.out.println("交易成功註冊並取得匿名身分");
-            System.out.println(response);
+
             JSONObject CA = new JSONObject(KeyGenerater.RSA_Decrypt(response,KeyGenerater.Get_RSA_PrivateKey(user.getRSA_privateKey())));
 
             UserFunctions.printOutAnonymousID(CA.toString());
