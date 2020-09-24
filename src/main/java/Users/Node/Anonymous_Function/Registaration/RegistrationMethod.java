@@ -112,7 +112,7 @@ public class RegistrationMethod {
 
         // 把 Anonymous CA 加密傳過去給使用者
         result = KeyGenerater.RSA_Encrypt(AnonymousID.toString(),KeyGenerater.Get_RSA_PublicKey(t.RSA_Publickey));
-
+        SocketWrite(result, nodeMethod.clientSocket);
 
         // 要留在RBC的真實使用者資料 用匿名使用者的KEY
         JSONObject userData = new JSONObject();
@@ -138,7 +138,7 @@ public class RegistrationMethod {
         // Add transaction to block
         nodeMethod.bufferChain.get(0).Add_Transaction(Anonymous);
 
-        SocketWrite(result, nodeMethod.clientSocket);
+
 
     }
 

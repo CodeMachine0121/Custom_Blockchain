@@ -106,14 +106,14 @@ public class SocketAction {
 
         String result = SocketRead(socket);
         String response;
-        System.out.println("result: "+result);
+
         if("pass".equals(result)){
             // get response
              response = SocketRead(socket);
         }else{
             response="fail";
         }
-
+        System.out.println(response);
         socket.close();
         return response;
     }
