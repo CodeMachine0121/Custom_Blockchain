@@ -127,7 +127,7 @@ public class Consensus {
             // send list size to server
             SocketWrite(str_listSize,socket);
 // str_listSize 送不出去
-// Response 等不到回應
+//  // connection reset
             // get response from server
             String nodeList_Response = SocketRead(socket);
 
