@@ -7,6 +7,7 @@ import BlockChain.Transaction;
 import org.json.JSONObject;
 
 import javax.crypto.NoSuchPaddingException;
+import javax.swing.*;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -91,22 +92,29 @@ public class SocketAction {
 
         // send command
         SocketWrite(command,socket);
+        Thread.sleep(TIME_DELAY);
+
         // send Transaction
         SocketWrite(transaction.Transaction_to_JSON().toString(),socket);
+        Thread.sleep(TIME_DELAY);
 
         /* check if you are real*/
         // send signature
         SocketWrite(signature,socket);
-        String result = SocketRead(socket);
+        Thread.sleep(TIME_DELAY);
 
+
+        String result = SocketRead(socket);
+        String response;
         if("pass".equals(result)){
             // get response
-            String response = SocketRead(socket);
-            socket.close();
-            return response;
+             response = SocketRead(socket);
         }else{
-            return "fail";
+            response="fail";
         }
+
+        socket.close();
+        return response;
     }
 
     public static double getBalance(String remoteHost,String address) throws IOException, InterruptedException {

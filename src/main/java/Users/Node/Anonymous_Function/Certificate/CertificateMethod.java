@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.List;
 import java.util.Scanner;
 
 import static Users.SocketAction.*;
@@ -108,12 +109,10 @@ public class CertificateMethod {
 
 
     // CBC-> wallet
-
-/*
-    public Boolean Revoke_Anonymous_CA(String str_Anonymous_CA)throws Exception{
+    public void Revoke_Anonymous_CA(String str_Anonymous_CA,String signature)throws Exception{
 
 
-         * Anonymous CA 內容
+         /* Anonymous CA 內容
          *  ID
          *  ECDSA_PublicKey
          *  ECDSA_PrivateKey
@@ -126,11 +125,18 @@ public class CertificateMethod {
          *       USER_RSA_PublicKey
          *       USER_Signature
          *       USER_Signature_Message
-         *
+         **/
+
         JSONObject AnonymousCA = new JSONObject(str_Anonymous_CA);
 
 
+
+
+
     }
-*/
+
+
+
+
 
 }

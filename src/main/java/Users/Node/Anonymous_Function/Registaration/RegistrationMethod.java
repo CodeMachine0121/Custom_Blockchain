@@ -14,8 +14,10 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
@@ -74,6 +76,7 @@ public class RegistrationMethod {
             SocketWrite("簽章錯誤: 申請簽章錯誤", nodeMethod.clientSocket);
             return;
         }else {
+            System.out.println("\t簽章正確");
             SocketWrite("pass", nodeMethod.clientSocket);
         }
 
@@ -120,18 +123,6 @@ public class RegistrationMethod {
 
         // 用匿名私鑰 對 UserData 做簽章 存在RBC裡面
         String Anonymous_Signature  = KeyGenerater.Sign_Message(userData.toString(),AnonymousKeyGenerator.Get_PrivateKey_String());
-
-        /*
-        *
-        *    ID
-        *    Signature
-        *    UserData:
-        *       USER_ECDSA_PublicKey
-        *       USER_RSA_PublicKey
-        *       USER_Signature
-        *       USER_Signature_Message
-        *    Status (0=>revoke, 1=>not revoked)
-        * */
 
         // 用JSON搭配ID值封裝起來
         JSONObject UserID = new JSONObject();
