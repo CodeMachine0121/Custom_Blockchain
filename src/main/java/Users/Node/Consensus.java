@@ -61,13 +61,14 @@ public class Consensus {
                 // Do nothing
                 System.out.println("Same chain size with Server");
             }
-
+            socket.close();
         }
+
         System.out.println("目前區塊: ");
         UserFunctions.printOutBlockchain(blockchain.get_All_Blocks_JSON(),blockchain.blockchain.size());
 
         this.nodeList = Reqeust_to_Node_for_NodeList(socket);
-        socket.close();
+
         return blockchain.blockchain;
     }
 

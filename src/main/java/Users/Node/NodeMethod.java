@@ -356,22 +356,22 @@ public class NodeMethod{
         System.out.println("\t測試連線\t");
     }
 
+    TimerTask askChain = new TimerTask() {
+        @Override
+        public void run() {
+            try {
+                Request_to_Node_for_Blockchain();
+            } catch (IOException | IllegalAccessException | NoSuchAlgorithmException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    };
     /* 指令會用到的 methods */
     public  Timer SetTimer(InetAddress remotehost)  {
         Remotehost=remotehost;
         timer =new Timer();
 
         System.out.println("*********設定排程********");
-        TimerTask askChain = new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    Request_to_Node_for_Blockchain();
-                } catch (IOException | IllegalAccessException | NoSuchAlgorithmException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
         timer.schedule(askChain, 10000, 30000);// 1秒後開始，之後每過30秒再執行
         return timer;
     }
