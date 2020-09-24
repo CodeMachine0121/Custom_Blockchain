@@ -22,8 +22,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
-import static Users.SocketAction.SocketRead;
-import static Users.SocketAction.SocketWrite;
+import static Users.SocketAction.*;
 
 public class RegistrationMethod {
 
@@ -42,7 +41,7 @@ public class RegistrationMethod {
         nodeMethod.actions.put("registerCA",()->{
             try {
                 RegisterAnonymousCA();
-            } catch (IOException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException | IllegalAccessException | InvalidKeyException | SignatureException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
+            } catch (IOException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException | IllegalAccessException | InvalidKeyException | SignatureException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | InterruptedException e) {
                 e.printStackTrace();
             }
         });
@@ -59,7 +58,7 @@ public class RegistrationMethod {
     public void TurnOn_Node_Server() throws IOException, NoSuchAlgorithmException, InvalidKeyException, SignatureException, IllegalAccessException, NoSuchPaddingException, BadPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, InterruptedException {
         nodeMethod.TurnOn_Node_Server();
     }
-    public void RegisterAnonymousCA() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, IllegalAccessException, InvalidKeyException, SignatureException, NoSuchPaddingException, BadPaddingException, IllegalBlockSizeException {
+    public void RegisterAnonymousCA() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, IllegalAccessException, InvalidKeyException, SignatureException, NoSuchPaddingException, BadPaddingException, IllegalBlockSizeException, InterruptedException {
         if(nodeMethod.nodeUser==null)
             System.exit(-15);
 
@@ -96,7 +95,7 @@ public class RegistrationMethod {
             SocketWrite(result, nodeMethod.clientSocket);
             return ;
         }
-
+        Thread.sleep(TIME_DELAY);
 
 
         // 創建 匿名ID 用使用者真實key加密
