@@ -232,12 +232,14 @@ public class NodeMethod{
         // send block no
         SocketAction.SocketWrite(String.valueOf(BlockNo), clientSocket);
 
-        // 確保在計算區塊期間 會有人提交新區塊 所以要刷新 previous block hash
-        bufferChain.get(0).previous_hash = blockchain.blockchain.get(blockchain.blockchain.size()-1).previous_hash;
+        if(blockchain.blockchain.size() != 0)
+            // 確保在計算區塊期間 會有人提交新區塊 所以要刷新 previous block hash
+            bufferChain.get(0).previous_hash = blockchain.blockchain.get(blockchain.blockchain.size()-1).previous_hash;
 
         // send block
         Thread.sleep(100);
         SocketAction.SocketWrite(bufferChain.get(0).get_Block_to_Json(BlockNo), clientSocket);
+        Thread.sleep(100);
     }
 
     // 接收已計算好的區塊
