@@ -187,7 +187,7 @@ public class RegistrationMethod {
     private void Send_AnonymousCA_to_CBC(JSONObject data) throws Exception{
 
         // update CBC nodes
-        //Update_CBC_Node_List();
+        Update_CBC_Node_List();
 
         for(String node: CBC_Nodes){
 
