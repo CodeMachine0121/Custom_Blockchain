@@ -12,6 +12,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -94,7 +95,7 @@ public class RegistrationMethod {
 
         System.out.println("註冊: "+nodeMethod.clientSocket.getInetAddress());
 
-        // get transaction String
+        // get transaction String from wallet
         String Stransaction = SocketRead(nodeMethod.clientSocket);
         Transaction t = UserFunctions.Convert2Transaction(Stransaction);
 
@@ -142,6 +143,7 @@ public class RegistrationMethod {
         // 把 Anonymous CA 加密傳過去給使用者
         result = KeyGenerater.RSA_Encrypt(AnonymousID.toString(),KeyGenerater.Get_RSA_PublicKey(t.RSA_Publickey));
         SocketWrite(result, nodeMethod.clientSocket);
+        Thread.sleep(TIME_DELAY);
 
         // 要留在RBC的真實使用者資料 用匿名使用者的KEY
         JSONObject userData = new JSONObject();
@@ -171,6 +173,13 @@ public class RegistrationMethod {
         try{
             // CBC 也需要存放
             JSONObject Data_CBC = new JSONObject();
+            Data_CBC.put("ID",t.receiver);
+            Data_CBC.put("Anonymous_ECDSA_PublicKey",AnonymousKeyGenerator.Get_PublicKey_String());
+            Data_CBC.put("Anonymous_RSA_PublicKey",AnonymousKeyGenerator.Get_RSA_PublicKey_String());
+
+            // 用匿名私鑰 做簽章
+            String sign = KeyGenerater.Sign_Message(t.receiver,AnonymousKeyGenerator.Get_PrivateKey_String());
+            Data_CBC.put("Signature",sign);
 
             Send_AnoymousCA_to_CBC(Data_CBC);
         }catch (Exception e){
@@ -193,8 +202,11 @@ public class RegistrationMethod {
             SocketWrite(commad, socket);
             Thread.sleep(TIME_DELAY);
 
+
+            String strTransaction = t.Transaction_to_JSON().toString();
+
             // send transaction
-            SocketWrite(t.Transaction_to_JSON().toString(),socket );
+            SocketWrite(strTransaction,socket );
             Thread.sleep(TIME_DELAY);
 
             socket.close();
