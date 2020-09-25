@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Main-Class: Users.Node.Anonymous_Function.Certificate.CertificateBlockch
+ ain
+Class-Path: netty-transport-4.1.48.Final.jar netty-resolver-4.1.48.Final
+ .jar zookeeper-3.6.1.jar netty-transport-native-unix-common-4.1.48.Fina
+ l.jar slf4j-api-1.7.25.jar netty-buffer-4.1.48.Final.jar commons-lang-2
+ .6.jar netty-transport-native-epoll-4.1.48.Final.jar audience-annotatio
+ ns-0.5.0.jar netty-codec-4.1.48.Final.jar slf4j-log4j12-1.7.25.jar nett
+ y-handler-4.1.48.Final.jar log4j-1.2.17.jar json-20200518.jar bcprov-jd
+ k15on-1.66.jar netty-common-4.1.48.Final.jar zookeeper-jute-3.6.1.jar
+
