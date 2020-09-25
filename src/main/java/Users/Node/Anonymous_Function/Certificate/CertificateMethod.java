@@ -91,10 +91,9 @@ public class CertificateMethod {
     public void Save_Anonymous_Data() throws Exception{
         // receive transaction from RBC
         // null
-        String strTransaction = SocketRead(nodeMethod.clientSocket);
+        JSONObject data = new JSONObject(SocketRead(nodeMethod.clientSocket));
 
-        System.out.println("transaction\n"+strTransaction);
-        Transaction t = UserFunctions.Convert2Transaction(strTransaction);
+        Transaction t = nodeMethod.nodeUser.Make_Transaction(nodeMethod.host,data.getString("ID"),0,0,data.toString());
 
         // add Transaction to buffer chain
         nodeMethod.bufferChain.get(0).Add_Transaction(t);

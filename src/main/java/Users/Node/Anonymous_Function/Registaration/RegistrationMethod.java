@@ -200,12 +200,8 @@ public class RegistrationMethod {
             SocketWrite(command, socket);
             Thread.sleep(TIME_DELAY);
 
-
-            Transaction t = nodeMethod.nodeUser.Make_Transaction(nodeMethod.host,node,0,0,data.toString());
-            String strTransaction = t.Transaction_to_JSON().toString();
-
-            // send transaction null
-            SocketWrite(strTransaction,socket);
+            // send data of Anonymous CA null
+            SocketWrite(data.toString(),socket);
             Thread.sleep(TIME_DELAY);
 
             socket.close();
