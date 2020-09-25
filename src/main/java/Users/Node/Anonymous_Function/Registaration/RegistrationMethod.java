@@ -65,7 +65,7 @@ public class RegistrationMethod {
     // 測試連線 紀錄單一CBC節點
     String CBC_Single_node="";
     public void Test_Connection() throws Exception{
-        System.out.println("Node: "+nodeMethod.clientSocket.getInetAddress()+" 測試連線");
+        System.out.println("CBC Node: "+nodeMethod.clientSocket.getInetAddress()+" 加入清單");
         CBC_Single_node = nodeMethod.clientSocket.getInetAddress().toString().split("/")[1];
         CBC_Nodes.add(CBC_Single_node);
     }
