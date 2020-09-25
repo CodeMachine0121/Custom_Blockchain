@@ -204,7 +204,7 @@ public class RegistrationMethod {
             String strTransaction = t.Transaction_to_JSON().toString();
 
             // send transaction null
-            SocketWrite(strTransaction,socket);
+            SocketWrite("heool",socket);
             Thread.sleep(TIME_DELAY);
 
             socket.close();
