@@ -180,6 +180,7 @@ public class RegistrationMethod {
             // update CBC nodes
             Update_CBC_Node_List();
 
+            // send anonymous data to CBC
             Send_AnonymousCA_to_CBC(Data_CBC);
 
         }catch (Exception e){
@@ -191,7 +192,6 @@ public class RegistrationMethod {
 
 
         for(String node: CBC_Nodes){
-
 
             Socket socket = new Socket(node,8000);
 
@@ -205,7 +205,7 @@ public class RegistrationMethod {
             String strTransaction = t.Transaction_to_JSON().toString();
 
             // send transaction null
-            SocketWrite("heool",socket);
+            SocketWrite(strTransaction,socket);
             Thread.sleep(TIME_DELAY);
 
             socket.close();
