@@ -15,11 +15,10 @@ import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.Socket;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Arrays;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.util.*;
 import java.util.List;
 
 import static Users.SocketAction.*;
@@ -31,6 +30,8 @@ public class RegistrationMethod {
     NodeMethod nodeMethod;
     // 紀錄 憑證狀態
     Dictionary<String,Integer> domain_Status = new Hashtable<>();
+    // 存放CBC節點的表
+    List<String> CBC_Nodes = new LinkedList<>();
 
     public RegistrationMethod() throws IOException, InterruptedException, NoSuchAlgorithmException, InvalidKeyException, SignatureException, IllegalAccessException, NoSuchPaddingException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException, IllegalBlockSizeException, InvalidKeySpecException {
 
@@ -41,7 +42,7 @@ public class RegistrationMethod {
         nodeMethod.actions.put("registerCA",()->{
             try {
                 RegisterAnonymousCA();
-            } catch (IOException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException | IllegalAccessException | InvalidKeyException | SignatureException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -54,11 +55,40 @@ public class RegistrationMethod {
             }
         });
 
+        nodeMethod.actions.put("Test_for_CBC",()->{
+            try {
+                this.Test_Connection();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
     public void TurnOn_Node_Server() throws IOException, NoSuchAlgorithmException, InvalidKeyException, SignatureException, IllegalAccessException, NoSuchPaddingException, BadPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, InterruptedException {
         nodeMethod.TurnOn_Node_Server();
     }
-    public void RegisterAnonymousCA() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, IllegalAccessException, InvalidKeyException, SignatureException, NoSuchPaddingException, BadPaddingException, IllegalBlockSizeException, InterruptedException {
+    // 測試連線 紀錄單一CBC節點
+    String CBC_Single_node="";
+    public void Test_Connection() throws Exception{
+        System.out.println("Node: "+nodeMethod.clientSocket.getInetAddress()+" 測試連線");
+        CBC_Single_node = nodeMethod.clientSocket.getInetAddress().toString().split("/")[1];
+    }
+    // 取得刷新 CBC全部節點
+    public void Update_CBC_Node_List() throws Exception{
+        Socket socket = new Socket(CBC_Single_node,8000);
+        // send command
+        SocketWrite("Get_CBC_Node_List",socket);
+        // receive string list
+        String strnodeList = SocketRead(socket);
+        // parse list
+        CBC_Nodes =  Arrays.asList(strnodeList.split("-"));
+
+        System.out.println("目前清單: ");
+        CBC_Nodes.forEach(node-> System.out.println("node: "+node));
+
+        socket.close();
+    }
+
+    public void RegisterAnonymousCA() throws Exception {
         if(nodeMethod.nodeUser==null)
             System.exit(-15);
 
@@ -132,15 +162,45 @@ public class RegistrationMethod {
         // 啟動憑證
         domain_Status.put(t.receiver,1);
 
+        // 把 USERID 放進 交易訊息中
         Transaction Anonymous = nodeMethod.nodeUser.Make_Transaction(nodeMethod.nodeUser.ECDSA_publicKey,t.sender,t.amount,t.fee,UserID.toString());
 
         // Add transaction to block
         nodeMethod.bufferChain.get(0).Add_Transaction(Anonymous);
 
+        try{
+            // CBC 也需要存放
+            JSONObject Data_CBC = new JSONObject();
+
+            Send_AnoymousCA_to_CBC(Data_CBC);
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("未與CBC連結");
+        }
+    }
+    private void Send_AnoymousCA_to_CBC(JSONObject data) throws Exception{
+
+        // update CBC nodes
+        Update_CBC_Node_List();
+
+        for(String node: CBC_Nodes){
+
+            Transaction t = nodeMethod.nodeUser.Make_Transaction(nodeMethod.host,node,0,0,data.toString());
+            Socket socket = new Socket(node,8000);
+
+            // send command
+            String commad = "SaveData";
+
+            // send transaction
+            SocketWrite(t.Transaction_to_JSON().toString(),socket );
+            Thread.sleep(TIME_DELAY);
+
+            socket.close();
+
+        }
 
 
     }
-
     public void Verify_Anonymous_CA()throws Exception{
 
         //  從 CBC收到的匿名CA

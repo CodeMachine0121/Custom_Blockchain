@@ -15,12 +15,11 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static Users.SocketAction.SocketRead;
-import static Users.SocketAction.SocketWrite;
+import static Users.SocketAction.*;
 
 public class Consensus {
     // 連線其他節點取得區塊練
-    List<String> nodeList = new LinkedList<>();
+    public List<String> nodeList = new LinkedList<>();
     String localhost ;
     public  Consensus(String localhost){
         this.localhost = localhost;
@@ -73,7 +72,7 @@ public class Consensus {
         return blockchain.blockchain;
     }
 
-    public ArrayList<Block> Response_from_Node_for_Blockchain(Blockchain blockchain, Socket socket) throws IOException, NoSuchAlgorithmException, IllegalAccessException {
+    public ArrayList<Block> Response_from_Node_for_Blockchain(Blockchain blockchain, Socket socket) throws IOException, NoSuchAlgorithmException, IllegalAccessException, InterruptedException {
 
         int blockSize = blockchain.blockchain.size();
         SocketWrite(String.valueOf(blockSize), socket);
@@ -165,7 +164,7 @@ public class Consensus {
         return nodeList;
     }
 
-    public List<String> Response_from_Node_for_NodeList(Socket socket) throws IOException {
+    public List<String> Response_from_Node_for_NodeList(Socket socket) throws IOException, InterruptedException {
         String str_listSize_from_client = SocketRead(socket);
         int listSize_from_Client = Integer.parseInt(str_listSize_from_client);
 
@@ -174,6 +173,7 @@ public class Consensus {
 
         if (listSize_from_Client > nodeList.size()){
             SocketWrite("client longer",socket);
+            Thread.sleep(TIME_DELAY);
             String str_nodeList_from_client = SocketRead(socket);
             nodeList = Arrays.asList(str_nodeList_from_client.split("-"));
         }

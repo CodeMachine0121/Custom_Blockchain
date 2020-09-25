@@ -91,7 +91,7 @@ public class NodeMethod{
         actions.put("Request_Node",()->{
             try {
                 Response_from_Node_for_Blockchain();
-            } catch (IllegalAccessException | IOException | NoSuchAlgorithmException e) {
+            } catch (IllegalAccessException | IOException | NoSuchAlgorithmException | InterruptedException e) {
                 e.printStackTrace();
             }
         });
@@ -331,7 +331,7 @@ public class NodeMethod{
 
 
     // 其他節點要求 區塊鏈比較
-    public void Response_from_Node_for_Blockchain() throws IllegalAccessException, NoSuchAlgorithmException, IOException {
+    public void Response_from_Node_for_Blockchain() throws IllegalAccessException, NoSuchAlgorithmException, IOException, InterruptedException {
         if(!consensus.nodeList.contains(clientSocket.getInetAddress().toString().split("/")[1]))
             consensus.nodeList.add(clientSocket.getInetAddress().toString().split("/")[1]);
         blockchain.blockchain = consensus.Response_from_Node_for_Blockchain(blockchain,clientSocket);

@@ -311,10 +311,13 @@ public class WalletUser {
          *
          */      // 由於 RBC中存放資料是 匿名帳戶對 USER DATA 的簽章，所以值要傳 簽章 跟 ID 回去就行了
 
-        Socket socket = new Socket(remoteHost,SERVER_PORT);
 
+
+        Socket socket = new Socket(remoteHost,SERVER_PORT);
         // send command
         SocketWrite("revoke",socket);
+
+
 
         return false;
     }
