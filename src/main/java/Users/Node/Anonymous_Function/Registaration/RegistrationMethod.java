@@ -190,6 +190,7 @@ public class RegistrationMethod {
 
             // send command
             String commad = "SaveData";
+            SocketWrite(commad,socket);
 
             // send transaction
             SocketWrite(t.Transaction_to_JSON().toString(),socket );

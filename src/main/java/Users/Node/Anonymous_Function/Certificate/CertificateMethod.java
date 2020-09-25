@@ -29,6 +29,7 @@ public class CertificateMethod {
     public CertificateMethod() throws Exception{
         System.out.print("輸入RBC節點IP:\t");
         RBCNode = scanner.nextLine();
+        Test_connection_RBC();
 
         if(!TestConnection(RBCNode)){
             System.out.println("連線失敗");
@@ -63,7 +64,7 @@ public class CertificateMethod {
         });
     }
     public void TurnOn_Node_Server() throws Exception{
-        Test_connection_RBC();
+
         nodeMethod.TurnOn_Node_Server();
     }
 
