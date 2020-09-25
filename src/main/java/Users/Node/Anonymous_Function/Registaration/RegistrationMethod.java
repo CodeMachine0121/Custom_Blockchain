@@ -114,6 +114,7 @@ public class RegistrationMethod {
             SocketWrite(result, nodeMethod.clientSocket);
             return;
         }
+
         // Verify the signature of transaction
         if(!Transaction.Is_transactions_valid(t)){
             System.out.println("\t\t交易簽章錯誤");
@@ -177,6 +178,7 @@ public class RegistrationMethod {
             Data_CBC.put("Signature",sign);
 
             Send_AnonymousCA_to_CBC(Data_CBC);
+
         }catch (Exception e){
             e.printStackTrace();
             System.out.println("未與CBC連結");
@@ -198,6 +200,7 @@ public class RegistrationMethod {
             SocketWrite(command, socket);
             Thread.sleep(TIME_DELAY);
 
+            System.out.println("停止");
 /*
             String strTransaction = t.Transaction_to_JSON().toString();
 

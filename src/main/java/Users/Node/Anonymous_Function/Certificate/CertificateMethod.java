@@ -162,8 +162,8 @@ public class CertificateMethod {
         Thread.sleep(TIME_DELAY);
         String result = SocketRead(socket);
 
-        socket.close();
 
+        socket.close();
         return result;
     }
 
