@@ -63,7 +63,7 @@ public class CertificateMethod {
         });
     }
     public void TurnOn_Node_Server() throws Exception{
-
+        Test_connection_RBC();
         nodeMethod.TurnOn_Node_Server();
     }
 
