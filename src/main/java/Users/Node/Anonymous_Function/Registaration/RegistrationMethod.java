@@ -187,7 +187,7 @@ public class RegistrationMethod {
     private void Send_AnonymousCA_to_CBC(JSONObject data) throws Exception{
 
         // update CBC nodes
-        Update_CBC_Node_List();
+        //Update_CBC_Node_List();
 
         for(String node: CBC_Nodes){
 
@@ -201,15 +201,14 @@ public class RegistrationMethod {
             Thread.sleep(TIME_DELAY);
 
             System.out.println("停止");
-/*
+
             String strTransaction = t.Transaction_to_JSON().toString();
 
             // send transaction
             SocketWrite(strTransaction,socket );
             Thread.sleep(TIME_DELAY);
-*/
-            socket.close();
 
+            socket.close();
         }
 
 
