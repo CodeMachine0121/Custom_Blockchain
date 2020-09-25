@@ -234,7 +234,7 @@ public class NodeMethod{
 
         if(blockchain.blockchain.size() != 0)
             // 確保在計算區塊期間 會有人提交新區塊 所以要刷新 previous block hash
-            bufferChain.get(0).previous_hash = blockchain.blockchain.get(blockchain.blockchain.size()-1).previous_hash;
+            bufferChain.get(0).previous_hash = blockchain.blockchain.get(blockchain.blockchain.size()-1).hash;
 
         // send block
         Thread.sleep(100);
