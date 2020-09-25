@@ -3,19 +3,14 @@ package Users.Node.Anonymous_Function.Registaration;
 import BlockChain.Block;
 import BlockChain.Transaction;
 import Users.Node.NodeMethod;
-import Users.SocketAction;
 import Users.UserFunctions;
 import Util.KeyGenerater;
 import org.json.JSONObject;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
-import javax.xml.crypto.Data;
-import java.awt.*;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.Socket;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
@@ -181,13 +176,13 @@ public class RegistrationMethod {
             String sign = KeyGenerater.Sign_Message(t.receiver,AnonymousKeyGenerator.Get_PrivateKey_String());
             Data_CBC.put("Signature",sign);
 
-            Send_AnoymousCA_to_CBC(Data_CBC);
+            Send_AnonymousCA_to_CBC(Data_CBC);
         }catch (Exception e){
             e.printStackTrace();
             System.out.println("未與CBC連結");
         }
     }
-    private void Send_AnoymousCA_to_CBC(JSONObject data) throws Exception{
+    private void Send_AnonymousCA_to_CBC(JSONObject data) throws Exception{
 
         // update CBC nodes
         Update_CBC_Node_List();
@@ -199,17 +194,17 @@ public class RegistrationMethod {
 
             System.out.println("transaction\n"+t.Transaction_to_JSON().toString());
             // send command
-            String commad = "SaveData";
-            SocketWrite(commad, socket);
+            String command = "SaveData";
+            SocketWrite(command, socket);
             Thread.sleep(TIME_DELAY);
 
-
+/*
             String strTransaction = t.Transaction_to_JSON().toString();
 
             // send transaction
             SocketWrite(strTransaction,socket );
             Thread.sleep(TIME_DELAY);
-
+*/
             socket.close();
 
         }
