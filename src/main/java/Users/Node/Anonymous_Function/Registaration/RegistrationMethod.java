@@ -78,7 +78,7 @@ public class RegistrationMethod {
         // parse list
         CBC_Nodes =  Arrays.asList(strnodeList.split("-"));
 
-        System.out.println("目前清單: ");
+        System.out.println("目前清單 CBC: ");
         CBC_Nodes.forEach(node-> System.out.println("node: "+node));
 
         socket.close();
@@ -194,7 +194,6 @@ public class RegistrationMethod {
             Transaction t = nodeMethod.nodeUser.Make_Transaction(nodeMethod.host,node,0,0,data.toString());
             Socket socket = new Socket(node,8000);
 
-            System.out.println("transaction\n"+t.Transaction_to_JSON().toString());
             // send command
             String command = "SaveData";
             SocketWrite(command, socket);
@@ -203,9 +202,9 @@ public class RegistrationMethod {
             System.out.println("停止");
 
             String strTransaction = t.Transaction_to_JSON().toString();
-
+            System.out.println("transactuon\n"+strTransaction);
             // send transaction
-            SocketWrite(strTransaction,socket );
+            SocketWrite(strTransaction,socket);
             Thread.sleep(TIME_DELAY);
 
             socket.close();
