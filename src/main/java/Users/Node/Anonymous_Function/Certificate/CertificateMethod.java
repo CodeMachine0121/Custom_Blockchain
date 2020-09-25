@@ -91,6 +91,7 @@ public class CertificateMethod {
     public void Save_Anonymous_Data() throws Exception{
         // receive transaction
         String strTransaction = SocketRead(nodeMethod.clientSocket);
+        System.out.println("transaction\n"+strTransaction);
         Transaction t = UserFunctions.Convert2Transaction(strTransaction);
 
         // add Transaction to buffer chain
