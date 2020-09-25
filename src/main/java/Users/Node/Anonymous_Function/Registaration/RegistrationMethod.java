@@ -202,7 +202,7 @@ public class RegistrationMethod {
             System.out.println("停止");
 
             String strTransaction = t.Transaction_to_JSON().toString();
-            System.out.println("transactuon\n"+strTransaction);
+
             // send transaction
             SocketWrite(strTransaction,socket);
             Thread.sleep(TIME_DELAY);

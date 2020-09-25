@@ -34,10 +34,12 @@ public class SocketAction {
     public static void SocketWrite(String msg, Socket socket) throws IOException {
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         out.println(msg);
+        out.close();
     }
     public static String SocketRead(Socket socket) throws IOException{
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         String greeting = in.readLine();
+        in.close();
         return greeting;
     }
 
