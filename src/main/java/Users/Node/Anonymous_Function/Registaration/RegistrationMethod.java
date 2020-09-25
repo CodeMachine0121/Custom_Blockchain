@@ -197,6 +197,7 @@ public class RegistrationMethod {
             Transaction t = nodeMethod.nodeUser.Make_Transaction(nodeMethod.host,node,0,0,data.toString());
             Socket socket = new Socket(node,8000);
 
+            System.out.println("transaction\n"+t.Transaction_to_JSON().toString());
             // send command
             String commad = "SaveData";
             SocketWrite(commad, socket);
