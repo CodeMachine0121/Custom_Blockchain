@@ -184,6 +184,7 @@ public class NodeMethod{
                     block = MakeEmptyBlock(blockchain.blockchain.get(blockchain.blockchain.size()-1).hash,blockchain.blockchain.size()+1);
                     bufferChain.add(block);
                 }catch (Exception e){
+                    e.printStackTrace();
                     System.out.println("由於 該節點區塊鏈為無, 加上該節點並不是創始解點 故發生錯誤");
                 }
             }
