@@ -67,6 +67,7 @@ public class RegistrationMethod {
     public void Test_Connection() throws Exception{
         System.out.println("Node: "+nodeMethod.clientSocket.getInetAddress()+" 測試連線");
         CBC_Single_node = nodeMethod.clientSocket.getInetAddress().toString().split("/")[1];
+        CBC_Nodes.add(CBC_Single_node);
     }
     // 取得刷新 CBC全部節點
     public void Update_CBC_Node_List() throws Exception{
@@ -177,8 +178,6 @@ public class RegistrationMethod {
             String sign = KeyGenerater.Sign_Message(t.receiver,AnonymousKeyGenerator.Get_PrivateKey_String());
             Data_CBC.put("Signature",sign);
 
-            // update CBC nodes
-            Update_CBC_Node_List();
 
             // send anonymous data to CBC
             Send_AnonymousCA_to_CBC(Data_CBC);
