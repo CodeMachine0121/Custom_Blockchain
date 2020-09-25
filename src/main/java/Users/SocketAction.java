@@ -34,12 +34,10 @@ public class SocketAction {
     public static void SocketWrite(String msg, Socket socket) throws IOException {
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         out.println(msg);
-        out.close();
     }
     public static String SocketRead(Socket socket) throws IOException{
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         String greeting = in.readLine();
-        in.close();
         return greeting;
     }
 
@@ -47,21 +45,23 @@ public class SocketAction {
     public static boolean TestConnection(String remoteHost) throws IOException {
         System.out.println("測試連線....");
         Socket socket = null;
+        boolean flag=false;
         try {
             socket = new Socket(InetAddress.getByName(remoteHost),SERVER_PORT);
             SocketWrite("test",socket);
             Thread.sleep(TIME_DELAY);
             System.out.println("連線成功");
 
-            socket.close();
-            return true;
+            flag=true;
         }catch (UnknownHostException e){
             System.out.println("無法辨識之主機");
-            socket.close();
-            return false;
+            flag=false;
         } catch (IOException | InterruptedException e) {
             System.out.println("無連線至節點");
-            return false;
+            flag=false;
+        }finally {
+            socket.close();
+            return flag;
         }
     }
 

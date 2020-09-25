@@ -191,7 +191,7 @@ public class RegistrationMethod {
 
         for(String node: CBC_Nodes){
 
-            Transaction t = nodeMethod.nodeUser.Make_Transaction(nodeMethod.host,node,0,0,data.toString());
+
             Socket socket = new Socket(node,8000);
 
             // send command
@@ -199,11 +199,11 @@ public class RegistrationMethod {
             SocketWrite(command, socket);
             Thread.sleep(TIME_DELAY);
 
-            System.out.println("停止");
 
+            Transaction t = nodeMethod.nodeUser.Make_Transaction(nodeMethod.host,node,0,0,data.toString());
             String strTransaction = t.Transaction_to_JSON().toString();
 
-            // send transaction
+            // send transaction null
             SocketWrite(strTransaction,socket);
             Thread.sleep(TIME_DELAY);
 
