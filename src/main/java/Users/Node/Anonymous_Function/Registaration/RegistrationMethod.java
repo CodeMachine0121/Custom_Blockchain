@@ -177,6 +177,9 @@ public class RegistrationMethod {
             String sign = KeyGenerater.Sign_Message(t.receiver,AnonymousKeyGenerator.Get_PrivateKey_String());
             Data_CBC.put("Signature",sign);
 
+            // update CBC nodes
+            Update_CBC_Node_List();
+
             Send_AnonymousCA_to_CBC(Data_CBC);
 
         }catch (Exception e){
@@ -186,8 +189,6 @@ public class RegistrationMethod {
     }
     private void Send_AnonymousCA_to_CBC(JSONObject data) throws Exception{
 
-        // update CBC nodes
-        Update_CBC_Node_List();
 
         for(String node: CBC_Nodes){
 

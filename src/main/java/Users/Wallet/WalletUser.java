@@ -213,7 +213,9 @@ public class WalletUser {
             System.out.println("交易簽章錯誤");
             transactions.remove(0);
         }
-        else {
+        else if(response ==null){
+            System.out.println("網路出現問題");
+        } else  {
             System.out.println("交易成功註冊並取得匿名身分");
 
             JSONObject CA = new JSONObject(KeyGenerater.RSA_Decrypt(response,KeyGenerater.Get_RSA_PrivateKey(user.getRSA_privateKey())));
