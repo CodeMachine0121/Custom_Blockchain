@@ -64,10 +64,6 @@ public class CertificateMethod {
     public void Test_connection_RBC()throws Exception{
         Socket socket = new Socket(RBCNode,SERVER_PORT);
         SocketWrite("Test_for_CBC",socket);
-
-        SocketWrite(Get_CBC_Node_List_String(),socket);
-
-        socket.close();
     }
 
     private String Get_CBC_Node_List_String() throws Exception {

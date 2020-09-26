@@ -67,17 +67,7 @@ public class RegistrationMethod {
     public void Test_Connection() throws Exception{
         System.out.println("CBC Node: "+nodeMethod.clientSocket.getInetAddress()+" 新增節點");
         CBC_Single_node = nodeMethod.clientSocket.getInetAddress().toString().split("/")[1];
-        //CBC_Nodes.add(CBC_Single_node);
-
-        // Get CBC LIST
-        // receive string list
-        String strnodeList = SocketRead(nodeMethod.clientSocket);
-        // parse list
-        CBC_Nodes =  Arrays.asList(strnodeList.split("_"));
-
-        System.out.println("目前清單 CBC: ");
-        CBC_Nodes.forEach(node-> System.out.println("node: "+node));
-
+        CBC_Nodes.add(CBC_Single_node);
     }
     // 取得刷新 CBC全部節點
     public void Update_CBC_Node_List() throws Exception{
