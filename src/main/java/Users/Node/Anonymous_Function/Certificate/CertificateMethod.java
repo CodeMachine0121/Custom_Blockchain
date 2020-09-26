@@ -74,7 +74,9 @@ public class CertificateMethod {
 
         // parse node list to string
         StringBuilder str_nodeList = new StringBuilder();
-        for(String node:nodeMethod.consensus.nodeList){
+        List<String> nodes = nodeMethod.consensus.nodeList;
+
+        for(String node:nodes){
             str_nodeList.append(node);
             str_nodeList.append("_");
         }
