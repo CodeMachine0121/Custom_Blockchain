@@ -55,13 +55,6 @@ public class CertificateMethod {
             }
         });
 
-        nodeMethod.actions.put("Get_CBC_Node_List",()->{
-            try {
-                Send_CBC_Node_List();
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
     }
     public void TurnOn_Node_Server() throws Exception{
 
@@ -71,10 +64,13 @@ public class CertificateMethod {
     public void Test_connection_RBC()throws Exception{
         Socket socket = new Socket(RBCNode,SERVER_PORT);
         SocketWrite("Test_for_CBC",socket);
+
+        SocketWrite(Get_CBC_Node_List_String(),socket);
+
         socket.close();
     }
 
-    public void Send_CBC_Node_List() throws IOException, InterruptedException {
+    private String Get_CBC_Node_List_String() throws IOException, InterruptedException {
 
         // parse node list to string
         StringBuilder str_nodeList = new StringBuilder();
@@ -82,9 +78,7 @@ public class CertificateMethod {
             str_nodeList.append(node);
             str_nodeList.append("-");
         }
-        SocketWrite(str_nodeList.toString(), nodeMethod.clientSocket);
-        Thread.sleep(TIME_DELAY);
-
+        return str_nodeList.toString();
     }
 
 
