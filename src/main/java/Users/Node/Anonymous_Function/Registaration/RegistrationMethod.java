@@ -65,9 +65,10 @@ public class RegistrationMethod {
     // 測試連線 紀錄單一CBC節點
     String CBC_Single_node="";
     public void Test_Connection() throws Exception{
-        System.out.println("CBC Node: "+nodeMethod.clientSocket.getInetAddress()+" 加入清單");
+        System.out.println("CBC Node: "+nodeMethod.clientSocket.getInetAddress()+" 新增節點");
         CBC_Single_node = nodeMethod.clientSocket.getInetAddress().toString().split("/")[1];
-        CBC_Nodes.add(CBC_Single_node);
+        //CBC_Nodes.add(CBC_Single_node);
+        Update_CBC_Node_List();
     }
     // 取得刷新 CBC全部節點
     public void Update_CBC_Node_List() throws Exception{
