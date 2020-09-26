@@ -55,6 +55,13 @@ public class CertificateMethod {
             }
         });
 
+        nodeMethod.actions.put("get-CBC",()->{
+            try {
+                Get_CBC_Node_List_String();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
     public void TurnOn_Node_Server() throws Exception{
 
@@ -66,7 +73,8 @@ public class CertificateMethod {
         SocketWrite("Test_for_CBC",socket);
     }
 
-    private String Get_CBC_Node_List_String() throws Exception {
+
+    private void Get_CBC_Node_List_String() throws Exception {
 
         // parse node list to string
         StringBuilder str_nodeList = new StringBuilder();
@@ -74,10 +82,10 @@ public class CertificateMethod {
 
         for(String node:nodes){
             str_nodeList.append(node);
-            str_nodeList.append("_");
+            str_nodeList.append("-");
         }
-        System.out.println("清單: \n"+str_nodeList.toString());
-        return str_nodeList.toString();
+
+        SocketWrite(str_nodeList.toString(), nodeMethod.clientSocket);
     }
 
 

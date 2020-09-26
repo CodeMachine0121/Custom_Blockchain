@@ -58,6 +58,14 @@ public class RegistrationMethod {
                 e.printStackTrace();
             }
         });
+
+        nodeMethod.actions.put("get-RBC",()->{
+            try {
+                Get_RBC_Node_List_String();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
     public void TurnOn_Node_Server() throws Exception {
         nodeMethod.TurnOn_Node_Server();
@@ -67,7 +75,10 @@ public class RegistrationMethod {
     public void Test_Connection() throws Exception{
         System.out.println("CBC Node: "+nodeMethod.clientSocket.getInetAddress()+" 新增節點");
         CBC_Single_node = nodeMethod.clientSocket.getInetAddress().toString().split("/")[1];
-        CBC_Nodes.add(CBC_Single_node);
+
+        // 加入 CBC節點進入清單
+        if(!CBC_Nodes.contains(CBC_Single_node))
+            CBC_Nodes.add(CBC_Single_node);
     }
     // 取得刷新 CBC全部節點
     public void Update_CBC_Node_List() throws Exception{
@@ -272,5 +283,19 @@ public class RegistrationMethod {
 
     }
 
+
+    public void Get_RBC_Node_List_String() throws Exception{
+
+        List<String> nodelist = nodeMethod.consensus.nodeList;
+
+        StringBuilder strNodeList = new StringBuilder();
+
+        for(String node:nodelist){
+            strNodeList.append(node);
+            strNodeList.append("-");
+        }
+        // send string list back
+        SocketWrite(strNodeList.toString(), nodeMethod.clientSocket);
+    }
 
 }
