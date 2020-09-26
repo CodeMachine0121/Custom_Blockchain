@@ -69,7 +69,7 @@ public class CertificateMethod {
     }
 
     public void Test_connection_RBC()throws Exception{
-        Socket socket = new Socket(RBCNode,8000);
+        Socket socket = new Socket(RBCNode,SERVER_PORT);
         SocketWrite("Test_for_CBC",socket);
         socket.close();
     }

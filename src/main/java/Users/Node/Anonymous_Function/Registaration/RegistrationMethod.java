@@ -72,7 +72,7 @@ public class RegistrationMethod {
     }
     // 取得刷新 CBC全部節點
     public void Update_CBC_Node_List() throws Exception{
-        Socket socket = new Socket(CBC_Single_node,8000);
+        Socket socket = new Socket(CBC_Single_node,SERVER_PORT);
         // send command
         SocketWrite("Get_CBC_Node_List",socket);
         // receive string list
@@ -193,7 +193,7 @@ public class RegistrationMethod {
 
         for(String node: CBC_Nodes){
 
-            Socket socket = new Socket(node,8000);
+            Socket socket = new Socket(node,SERVER_PORT);
 
             // send command
             String command = "SaveData";
