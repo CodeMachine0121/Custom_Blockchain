@@ -29,7 +29,7 @@ public class RegistrationMethod {
     // 存放CBC節點的表
     List<String> CBC_Nodes = new LinkedList<>();
 
-    public RegistrationMethod() throws IOException, InterruptedException, NoSuchAlgorithmException, InvalidKeyException, SignatureException, IllegalAccessException, NoSuchPaddingException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException, IllegalBlockSizeException, InvalidKeySpecException {
+    public RegistrationMethod() throws Exception {
 
         nodeMethod = new NodeMethod();
 
@@ -59,7 +59,7 @@ public class RegistrationMethod {
             }
         });
     }
-    public void TurnOn_Node_Server() throws IOException, NoSuchAlgorithmException, InvalidKeyException, SignatureException, IllegalAccessException, NoSuchPaddingException, BadPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, InterruptedException {
+    public void TurnOn_Node_Server() throws Exception {
         nodeMethod.TurnOn_Node_Server();
     }
     // 測試連線 紀錄單一CBC節點

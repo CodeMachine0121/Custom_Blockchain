@@ -19,7 +19,7 @@ import java.util.Scanner;
 import static Users.SocketAction.*;
 
 public class CertificateMethod {
-    NodeMethod nodeMethod;
+    NodeMethod nodeMethod=new NodeMethod();
     String RBCNode;
     Scanner scanner = new Scanner(System.in);
 
@@ -36,7 +36,7 @@ public class CertificateMethod {
             System.exit(-15);
         }
 
-        nodeMethod = new NodeMethod();
+
         nodeMethod.Setup_ServerNode();
 
         nodeMethod.actions.put("verifyCA",()->{
@@ -70,7 +70,7 @@ public class CertificateMethod {
         socket.close();
     }
 
-    private String Get_CBC_Node_List_String() throws IOException, InterruptedException {
+    private String Get_CBC_Node_List_String() throws Exception {
 
         // parse node list to string
         StringBuilder str_nodeList = new StringBuilder();
