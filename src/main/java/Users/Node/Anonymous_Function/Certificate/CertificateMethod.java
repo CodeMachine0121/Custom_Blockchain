@@ -76,8 +76,9 @@ public class CertificateMethod {
         StringBuilder str_nodeList = new StringBuilder();
         for(String node:nodeMethod.consensus.nodeList){
             str_nodeList.append(node);
-            str_nodeList.append("-");
+            str_nodeList.append("_");
         }
+        System.out.println("清單: \n"+str_nodeList.toString());
         return str_nodeList.toString();
     }
 

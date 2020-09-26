@@ -73,7 +73,7 @@ public class RegistrationMethod {
         // receive string list
         String strnodeList = SocketRead(nodeMethod.clientSocket);
         // parse list
-        CBC_Nodes =  Arrays.asList(strnodeList.split("-"));
+        CBC_Nodes =  Arrays.asList(strnodeList.split("_"));
 
         System.out.println("目前清單 CBC: ");
         CBC_Nodes.forEach(node-> System.out.println("node: "+node));
