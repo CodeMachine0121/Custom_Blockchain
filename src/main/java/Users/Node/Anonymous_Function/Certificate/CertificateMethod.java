@@ -91,7 +91,6 @@ public class CertificateMethod {
 
     public void Save_Anonymous_Data() throws Exception{
         // receive transaction from RBC
-        // null
         JSONObject data = new JSONObject(SocketRead(nodeMethod.clientSocket));
 
         Transaction t = nodeMethod.nodeUser.Make_Transaction(nodeMethod.host,data.getString("ID"),0,0,data.toString());
@@ -100,8 +99,9 @@ public class CertificateMethod {
         nodeMethod.bufferChain.get(0).Add_Transaction(t);
 
         String nodeAddress = nodeMethod.clientSocket.getInetAddress().toString().split("/")[1];
+
         if (!RBC_nodes_List.contains(nodeAddress)){
-            System.out.println("node: "+nodeAddress);
+            System.out.println("RBC node: "+nodeAddress+" 加入清單");
             RBC_nodes_List.add(nodeAddress);
         }
 

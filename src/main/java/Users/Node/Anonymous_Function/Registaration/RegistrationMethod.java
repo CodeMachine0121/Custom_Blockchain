@@ -200,7 +200,7 @@ public class RegistrationMethod {
     }
     private void Send_AnonymousCA_to_CBC(JSONObject data) throws Exception{
 
-
+        System.out.println("傳送憑證至 CBC...");
         for(String node: CBC_Nodes){
 
             Socket socket = new Socket(node,SERVER_PORT);

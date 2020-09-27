@@ -288,8 +288,6 @@ public class WalletMethod {
             // 儲存 匿名使用者之憑證
             UserFunctions.saveCertificate(CA);
 
-
-
             transactions.remove(0);
         }
     }
@@ -315,7 +313,7 @@ public class WalletMethod {
         Transaction t = user.Make_Transaction(user.address,"CBC",0,0,CA.toString());
 
         // commit transaction
-        Boolean response = Verify_CA(remoteHost,t);
+        Boolean response = Verify_CA(t);
 
         if(response)
             System.out.println("審核結果: 通過");
@@ -325,9 +323,9 @@ public class WalletMethod {
 
 
     // Wallet -> CBC
-    public Boolean Verify_CA(String remotehost ,Transaction T) throws IOException, IllegalAccessException, InterruptedException {
+    public Boolean Verify_CA(Transaction T) throws IOException, IllegalAccessException, InterruptedException {
         String command = "verifyCA";
-        Socket socket = new Socket(remotehost,SERVER_PORT);
+        Socket socket = new Socket(remoteCBCHost,SERVER_PORT);
 
         // send command
         SocketWrite(command,socket);
