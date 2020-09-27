@@ -7,6 +7,8 @@ import Users.Node.NodeMethod;
 import Users.Node.NodeUser;
 import Users.SocketAction;
 import Users.UserFunctions;
+import Util.KeyGenerater;
+import Util.StringUtil;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Timer;
 
 import static Users.SocketAction.*;
 
@@ -58,6 +61,14 @@ public class CertificateMethod {
         nodeMethod.actions.put("get-CBC",()->{
             try {
                 Get_CBC_Node_List_String();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        nodeMethod.actions.put("revoke",()->{
+            try {
+                RevokeCA();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -151,7 +162,7 @@ public class CertificateMethod {
 
     // CBC -> RBC
     // 驗證CA
-    public static String Request_Search_AnonymousID(String remoteHost,String CA) throws Exception{
+    private String Request_Search_AnonymousID(String remoteHost,String CA) throws Exception{
 
         Socket socket = new Socket(remoteHost,SocketAction.SERVER_PORT);
         Thread.sleep(SocketAction.TIME_DELAY);
@@ -172,34 +183,72 @@ public class CertificateMethod {
 
 
     // CBC-> wallet
-    public void Revoke_Anonymous_CA(String str_Anonymous_CA,String signature)throws Exception{
+
+    private  void RevokeCA() throws  Exception{
+
+        // get ID from wallet
+        String ID = SocketRead(nodeMethod.clientSocket);
+
+        // to find ID in chain
+        Transaction ID_txn = Find_Data_by_ID(ID);
+        if(ID_txn==null){
+            SocketWrite("noExist", nodeMethod.clientSocket);
+            Thread.sleep(TIME_DELAY);
+            return;
+        }
+        SocketWrite("pass", nodeMethod.clientSocket);
+        Thread.sleep(TIME_DELAY);
 
 
-         /* Anonymous CA 內容
-         *  ID
-         *  ECDSA_PublicKey
-         *  ECDSA_PrivateKey
-         *  RSA_PublicKey
-         *  RSA_PrivateKey
+        // verify identify of current user
+        String signature = SocketRead(nodeMethod.clientSocket);
+        // get public key in transaction
+        JSONObject msg = new JSONObject(ID_txn.messages);
+        String publickey = msg.getString("ECDSA_PublicKey");
+        String ID_hash = StringUtil.applyHASH(ID,"SHA-256");
 
-         * Transaction 內容
-         *   UserID:
-         *       USER_ECDSA_PublicKey
-         *       USER_RSA_PublicKey
-         *       USER_Signature
-         *       USER_Signature_Message
-         **/
+        if(!KeyGenerater.Verify_Signature(signature,publickey,ID_hash )){
+            System.out.println("簽章辨識錯誤");
+            SocketWrite("errorVerify", nodeMethod.clientSocket);
+            Thread.sleep(TIME_DELAY);
+            return ;
+        }
 
-        JSONObject AnonymousCA = new JSONObject(str_Anonymous_CA);
-
-
-
-
-
+        // request RBC to update status
+        if(Update_CA_Status()){
+            SocketWrite("revoked", nodeMethod.clientSocket);
+            Thread.sleep(TIME_DELAY);
+        }
     }
 
+    private Transaction Find_Data_by_ID(String ID){
+        for (Block block: nodeMethod.blockchain.blockchain) {
+            for(Transaction t: block.transactions){
+                if(t.receiver.equals(ID)){
+                    return t;
+                }
+            }
+        }
+        return null;
+    }
 
+    private boolean Update_CA_Status()throws Exception{
 
+        Socket socket = new Socket(RBCNode,SERVER_PORT);
 
+        // send command to RBC
+        SocketWrite("revoke",socket);
+        Thread.sleep(TIME_DELAY);
 
+        String response = SocketRead(socket);
+
+        socket.close();
+
+        if(!response.equals("pass")){
+            System.out.println(response);
+            return false;
+        }
+        System.out.println("RBC 完成註銷");
+        return true;
+    }
 }

@@ -5,6 +5,7 @@ import BlockChain.Transaction;
 import Users.SocketAction;
 import Users.UserFunctions;
 import Util.KeyGenerater;
+import Util.StringUtil;
 import org.bouncycastle.jcajce.provider.symmetric.AES;
 import org.json.JSONObject;
 
@@ -96,6 +97,14 @@ public class WalletMethod {
             }
         });
         actions.put("nodes", this::PrintOut_Nodes_List);
+
+        actions.put("revoke",()->{
+            try {
+                RevokeCA();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
     }
 
@@ -365,22 +374,70 @@ public class WalletMethod {
 
 
     // 註銷 CA
-    public  Boolean RevokeCA(String ID,String pbulickey,String signature) throws Exception {
-        /*
-         * CA 內容
-         *   ID:
-         *   Signature:
+    // Wallet -> CBC
+    public void RevokeCA() throws Exception {
+
+        /* Anonymous CA 內容
+         *  ID
+         *  ECDSA_PublicKey
+         *  ECDSA_PrivateKey
+         *  RSA_PublicKey
+         *  RSA_PrivateKey
+
+         * Transaction 內容
          *   UserID:
+         *      ID
          *       USER_ECDSA_PublicKey
          *       USER_RSA_PublicKey
          *       USER_Signature
          *       USER_Signature_Message
-         *
-         */      // 由於 RBC中存放資料是 匿名帳戶對 USER DATA 的簽章，所以值要傳 簽章 跟 ID 回去就行了
+         **/
+        System.out.println("欲撤銷CA之ID: ");
+        String ID = scanner.nextLine();
+        Socket socket= new Socket(remoteCBCHost,8000);
+
+        // send command
+        SocketWrite("revoke",socket);
+        Thread.sleep(TIME_DELAY);
+
+        // send ID 確認是否存在
+        SocketWrite(ID,socket);
+        Thread.sleep(TIME_DELAY);
 
 
+        // get response from CBC, check if CA exist and status
+        String response = SocketRead(socket);
+        if(!"pass".equals(response)){
+            System.out.println("該憑證不存在 "+ID);
+            socket.close();
+            return;
+        }
 
 
-        return false;
+        // 驗證身分
+        String str_Anonymous = UserFunctions.loadAnonymous(ID);
+
+        JSONObject Anonymous = new JSONObject(str_Anonymous);
+
+        String ecdsa_sk = Anonymous.getString("ECDSA_PrivateKey");
+        // message -> h(ID)
+        String ID_hash = StringUtil.applyHASH(ID,"SHA-256");
+        String signature = KeyGenerater.Sign_Message(ID_hash,ecdsa_sk);
+
+        // send signature to CBC
+        SocketWrite(signature,socket);
+        Thread.sleep(TIME_DELAY);
+
+        response = SocketRead(socket);
+
+        if(!"revoked".equals(response)) {
+            System.out.println("簽章錯誤 故中斷");
+            socket.close();
+            return;
+        }
+
+        System.out.println("成功註銷");
+        socket.close();
+
     }
 }

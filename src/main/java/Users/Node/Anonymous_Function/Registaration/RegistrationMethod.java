@@ -25,7 +25,7 @@ public class RegistrationMethod {
 
     NodeMethod nodeMethod;
     // 紀錄 憑證狀態
-    Dictionary<String,Integer> domain_Status = new Hashtable<>();
+    HashMap<String,Integer> domain_Status = new HashMap<>();
     // 存放CBC節點的表
     List<String> CBC_Nodes = new LinkedList<>();
 
@@ -66,37 +66,33 @@ public class RegistrationMethod {
                 e.printStackTrace();
             }
         });
+
+        nodeMethod.actions.put("revoke",()->{
+            try {
+                Update_Status_of_CA();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
+
     public void TurnOn_Node_Server() throws Exception {
         nodeMethod.TurnOn_Node_Server();
     }
+
     // 測試連線 紀錄單一CBC節點
     String CBC_Single_node="";
-    public void Test_Connection() throws Exception{
+    private void Test_Connection() throws Exception{
         System.out.println("CBC Node: "+nodeMethod.clientSocket.getInetAddress()+" 新增節點");
         CBC_Single_node = nodeMethod.clientSocket.getInetAddress().toString().split("/")[1];
 
         // 加入 CBC節點進入清單
         if(!CBC_Nodes.contains(CBC_Single_node))
+
             CBC_Nodes.add(CBC_Single_node);
     }
-    // 取得刷新 CBC全部節點
-    public void Update_CBC_Node_List() throws Exception{
-        Socket socket = new Socket(CBC_Single_node,SERVER_PORT);
-        // send command
-        SocketWrite("Get_CBC_Node_List",socket);
-        // receive string list
-        String strnodeList = SocketRead(socket);
-        // parse list
-        CBC_Nodes =  Arrays.asList(strnodeList.split("-"));
-
-        System.out.println("目前清單 CBC: ");
-        CBC_Nodes.forEach(node-> System.out.println("node: "+node));
-
-        socket.close();
-    }
-
-    public void RegisterAnonymousCA() throws Exception {
+    // Create CA
+    private void RegisterAnonymousCA() throws Exception {
         if(nodeMethod.nodeUser==null)
             System.exit(-15);
 
@@ -198,6 +194,7 @@ public class RegistrationMethod {
             System.out.println("未與CBC連結");
         }
     }
+
     private void Send_AnonymousCA_to_CBC(JSONObject data) throws Exception{
 
         System.out.println("傳送憑證至 CBC...");
@@ -219,7 +216,8 @@ public class RegistrationMethod {
 
 
     }
-    public void Verify_Anonymous_CA()throws Exception{
+
+    private void Verify_Anonymous_CA()throws Exception{
 
         //  從 CBC收到的匿名CA
         String strCA = SocketRead(nodeMethod.clientSocket);
@@ -283,8 +281,7 @@ public class RegistrationMethod {
 
     }
 
-
-    public void Get_RBC_Node_List_String() throws Exception{
+    private void Get_RBC_Node_List_String() throws Exception{
 
         List<String> nodelist = nodeMethod.consensus.nodeList;
 
@@ -296,6 +293,33 @@ public class RegistrationMethod {
         }
         // send string list back
         SocketWrite(strNodeList.toString(), nodeMethod.clientSocket);
+    }
+
+    // update status of CA
+    private void Update_Status_of_CA() throws Exception{
+        // only CBC can call this function
+        String client = nodeMethod.clientSocket.getInetAddress().toString().split("/")[1];
+        if(!CBC_Nodes.contains(client)){
+            SocketWrite("error identify", nodeMethod.clientSocket);
+            Thread.sleep(TIME_DELAY);
+            return;
+        }
+
+        // get ID
+        String ID = SocketRead(nodeMethod.clientSocket);
+
+        // check if CA status and is_exist
+        if(!domain_Status.containsKey(ID) || domain_Status.get(ID)==0){
+           SocketWrite("no exist or having been revoked", nodeMethod.clientSocket);
+           Thread.sleep(TIME_DELAY);
+           return ;
+        }
+
+        // update status
+        domain_Status.put(ID,0);
+
+        // 可以的話要做身分驗證
+        SocketWrite("pass", nodeMethod.clientSocket);
     }
 
 }
