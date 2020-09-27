@@ -230,7 +230,7 @@ public class RegistrationMethod {
 
 
         boolean flag =false;
-        if(nodeMethod.blockchain.blockchain.size() == 1){
+        if(nodeMethod.blockchain.blockchain.size() == 1 && nodeMethod.blockchain.blockchain.get(0).transactions.size()==1 ){
             System.out.println("CA 資料庫尚未建起");
             SocketWrite("Fail",nodeMethod.clientSocket);
             return;
