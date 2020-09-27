@@ -74,6 +74,8 @@ public class RegistrationMethod {
                 e.printStackTrace();
             }
         });
+
+        nodeMethod.actions.put("listCA", this::List_CA);
     }
 
     public void TurnOn_Node_Server() throws Exception {
@@ -321,6 +323,16 @@ public class RegistrationMethod {
 
         // 可以的話要做身分驗證
         SocketWrite("pass", nodeMethod.clientSocket);
+
+
+        List_CA();
     }
 
+
+    private void List_CA(){
+        for(Map.Entry<String,Integer> m:domain_Status.entrySet()) {
+            System.out.println("\tDomain: "+m.getKey());
+            System.out.println("\tStatus: "+m.getValue());
+        }
+    }
 }

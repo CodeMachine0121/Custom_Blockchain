@@ -375,7 +375,7 @@ public class WalletMethod {
 
     // 註銷 CA
     // Wallet -> CBC
-    public void RevokeCA() throws Exception {
+    private void RevokeCA() throws Exception {
 
         /* Anonymous CA 內容
          *  ID
@@ -392,9 +392,9 @@ public class WalletMethod {
          *       USER_Signature
          *       USER_Signature_Message
          **/
-        System.out.println("欲撤銷CA之ID: ");
+        System.out.print("欲撤銷CA之ID: \n\t");
         String ID = scanner.nextLine();
-        Socket socket= new Socket(remoteCBCHost,8000);
+        Socket socket= new Socket(remoteCBCHost,SERVER_PORT);
 
         // send command
         SocketWrite("revoke",socket);
@@ -440,4 +440,7 @@ public class WalletMethod {
         socket.close();
 
     }
+
+
+
 }
