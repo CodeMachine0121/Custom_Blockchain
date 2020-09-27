@@ -121,7 +121,7 @@ public class CertificateMethod {
     public void VerificationCertificate() throws Exception{
         if(nodeMethod.nodeUser == null)
             System.exit(-15);
-        System.out.println("審核Certificate:\t"+nodeMethod.clientSocket.getInetAddress());
+        System.out.println("審核 Certificate:\t"+nodeMethod.clientSocket.getInetAddress());
 
 
         // get transaction String

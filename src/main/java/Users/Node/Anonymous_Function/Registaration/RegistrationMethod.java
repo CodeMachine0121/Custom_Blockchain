@@ -267,7 +267,7 @@ public class RegistrationMethod {
             if(flag)
                 break;
         }
-        System.out.print("完成檢驗: "+flag);
+        System.out.print("完成檢驗: ");
         if(flag){
             if(domain_Status.get(ID) == 0){
                 System.out.println("憑證過期");

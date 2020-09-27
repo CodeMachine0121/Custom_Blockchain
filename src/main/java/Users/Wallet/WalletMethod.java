@@ -357,7 +357,7 @@ public class WalletMethod {
         SocketWrite(Transaction_with_CA,socket);
 
         String result = SocketRead(socket);
-        System.out.println(result);
+
 
         if("exceed length".equals(result)){
             System.out.println("該區塊交易已滿");
@@ -396,7 +396,7 @@ public class WalletMethod {
          *       USER_Signature
          *       USER_Signature_Message
          **/
-        System.out.print("欲撤銷CA之ID: \n\t");
+        System.out.print("欲撤銷CA之ID:\t");
         String ID = scanner.nextLine();
         Socket socket= new Socket(remoteCBCHost,SERVER_PORT);
 
