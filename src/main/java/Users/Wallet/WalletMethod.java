@@ -313,7 +313,7 @@ public class WalletMethod {
         }
     }
 
-
+    // 要有CA 才可進行驗證搜尋
     // 驗證 匿名CA
     private  void Verify_CA() throws Exception{
 
