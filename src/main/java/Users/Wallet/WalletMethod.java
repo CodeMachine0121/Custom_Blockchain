@@ -95,6 +95,8 @@ public class WalletMethod {
                 e.printStackTrace();
             }
         });
+        actions.put("nodes", this::PrintOut_Nodes_List);
+
     }
 
 
@@ -252,6 +254,16 @@ public class WalletMethod {
         }
     }
 
+    // 印出 RBC CBC 節點清單
+    private void PrintOut_Nodes_List() {
+        System.out.println("RBC 節點清單:\n");
+        for(String rbc:RBC_Nodes)
+            System.out.println("\t"+rbc+"\n");
+
+        System.out.println("CBC 節點清單\n");
+        for(String cbc:CBC_Nodes)
+            System.out.println("CBC 節點清單\n");
+    }
 
     // 取得 匿名CA
     private  void Get_AnonymousCA() throws Exception {
@@ -292,6 +304,7 @@ public class WalletMethod {
         }
     }
 
+
     // 驗證 匿名CA
     private  void Verify_CA() throws Exception{
 
@@ -320,7 +333,6 @@ public class WalletMethod {
 
 
     }
-
 
     // Wallet -> CBC
     public Boolean Verify_CA(Transaction T) throws IOException, IllegalAccessException, InterruptedException {
