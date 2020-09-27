@@ -367,6 +367,10 @@ public class WalletMethod {
             System.out.println("交易簽章錯誤");
             return false;
         }
+        if("out of date".equals(result)){
+            System.out.println("憑證過期");
+            return false;
+        }
 
         return !"Fail".equals(result);
     }

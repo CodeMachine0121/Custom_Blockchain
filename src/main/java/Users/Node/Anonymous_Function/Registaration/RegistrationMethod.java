@@ -267,15 +267,16 @@ public class RegistrationMethod {
             if(flag)
                 break;
         }
-        System.out.println("完成檢驗: "+flag);
+        System.out.print("完成檢驗: "+flag);
         if(flag){
             if(domain_Status.get(ID) == 0){
-                System.out.println("out of date");
+                System.out.println("憑證過期");
                 SocketWrite("out of date",nodeMethod.clientSocket);
             }else{
-                SocketWrite("Success",nodeMethod.clientSocket);
+                SocketWrite("憑證有效",nodeMethod.clientSocket);
             }
         }else{
+            System.out.println("憑證有誤");
             SocketWrite("Fail",nodeMethod.clientSocket);
         }
 
