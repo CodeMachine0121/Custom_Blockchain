@@ -215,7 +215,7 @@ public class CertificateMethod {
         }
 
         // request RBC to update status
-        if(Update_CA_Status()){
+        if(Update_CA_Status(ID)){
             SocketWrite("revoked", nodeMethod.clientSocket);
             Thread.sleep(TIME_DELAY);
         }
@@ -232,7 +232,8 @@ public class CertificateMethod {
         return null;
     }
 
-    private boolean Update_CA_Status()throws Exception{
+    // CBC->RBC
+    private boolean Update_CA_Status(String ID)throws Exception{
 
         Socket socket = new Socket(RBCNode,SERVER_PORT);
 
@@ -240,8 +241,11 @@ public class CertificateMethod {
         SocketWrite("revoke",socket);
         Thread.sleep(TIME_DELAY);
 
-        String response = SocketRead(socket);
+        // send ID
+        SocketWrite(ID,socket);
+        Thread.sleep(TIME_DELAY);
 
+        String response = SocketRead(socket);
         socket.close();
 
         if(!response.equals("pass")){

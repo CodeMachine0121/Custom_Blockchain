@@ -307,6 +307,7 @@ public class RegistrationMethod {
 
         // get ID
         String ID = SocketRead(nodeMethod.clientSocket);
+        System.out.println("ID :"+ID+" 申請撤銷");
 
         // check if CA status and is_exist
         if(!domain_Status.containsKey(ID) || domain_Status.get(ID)==0){
