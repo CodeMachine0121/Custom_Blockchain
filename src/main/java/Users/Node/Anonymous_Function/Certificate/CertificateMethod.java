@@ -204,7 +204,7 @@ public class CertificateMethod {
         String signature = SocketRead(nodeMethod.clientSocket);
         // get public key in transaction
         JSONObject msg = new JSONObject(ID_txn.messages);
-        String publickey = msg.getString("ECDSA_PublicKey");
+        String publickey = msg.getString("Anonymous_ECDSA_PublicKey");
         String ID_hash = StringUtil.applyHASH(ID,"SHA-256");
 
         if(!KeyGenerater.Verify_Signature(signature,publickey,ID_hash )){
