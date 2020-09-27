@@ -262,7 +262,7 @@ public class WalletMethod {
 
         System.out.println("CBC 節點清單\n");
         for(String cbc:CBC_Nodes)
-            System.out.println("CBC 節點清單\n");
+            System.out.println("\t"+cbc+"\n");
     }
 
     // 取得 匿名CA
